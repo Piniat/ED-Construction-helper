@@ -11,6 +11,7 @@ from prompt_toolkit.patch_stdout import patch_stdout
 from datetime import datetime
 from tzlocal import get_localzone
 import pytz
+import sys
 
 #functions  
 
@@ -153,6 +154,30 @@ def user_input():
                 app_mode = "2"
             elif usr_input == "app-mode-1":
                 app_mode = "1"
+            elif usr_input == "edit-shopping-list":
+                edit_list()
+def edit_list():
+    if not os.path.isfile('progress.json'):
+        print("Error no list detected, please make one first")
+    else:
+        #with open('progress.json', 'w') as writefile:
+        #    initial_list = json.load(writefile)
+        #    key = prompt("Commodity name in all lower case and no spaces: \n")
+        #    value = prompt("New amount needed: \n")
+        #    key = key.strip()
+        #    value = value.strip()
+        #    key = key.replace(" ", "")
+        #    initial_list[key.lower()] = int(value)
+        #    formatted_list = json.dumps(initial_list, indent=4)
+        #    writefile.write(formatted_list)
+        #    print("done!")
+        print("Working on it! For now please edit the progress.json to change remaining needed values and add/remove stuff)")
+
+            
+
+def start_user_input():
+    t1 = threading.Thread(target=user_input, daemon=True)
+    t1.start()
                 
 def close_app():
     os._exit(0)
@@ -220,12 +245,24 @@ def log_mode():
 
 def tracking_mode():
     global initialized
+    global input_started
     if not os.path.isfile('progress.json') and initialized == 0:
-        initial_list = {"aluminium":7143, "buildingfabricators":394, "ceramiccomposites":816, "cmmcomposite":6800, "computercomponents":98, "copper":390, "emergencypowercells":71, "evacuationshelter":203, "foodcartridges":139, "fruitandvegetables":97, "liquidoxygen":2455, "medicaldiagnosticequipment":46, "nonleathalweapons":33, "polymers":672, "powergenerators":70, "semiconductors":101, "steel":10659, "structuralregulators":665, "superconductors":134, "surfacestabilisers":603, "survivalequipment":57, "landenrichmentsystems":69, "titanium":5498}
+        #initial_list = {"aluminium":7143, "buildingfabricators":394, "ceramiccomposites":816, "cmmcomposite":6800, "computercomponents":98, "copper":390, "emergencypowercells":71, "evacuationshelter":203, "foodcartridges":139, "fruitandvegetables":97, "liquidoxygen":2455, "medicaldiagnosticequipment":46, "nonleathalweapons":33, "polymers":672, "powergenerators":70, "semiconductors":101, "steel":10659, "structuralregulators":665, "superconductors":134, "surfacestabilisers":603, "survivalequipment":57, "landenrichmentsystems":69, "titanium":5498}
+        initial_list = {}
+        item_amount = int(prompt("How many items do you plan on buying? \n"))
+        i = 0
+        for i in range(item_amount):
+            key = prompt("Commodity name in all lower case and no spaces: \n")
+            value = prompt("Amount needed: \n")
+            key = key.strip()
+            value = value.strip()
+            key = key.replace(" ", "")
+            initial_list[key.lower()] = int(value)
         formatted_list = json.dumps(initial_list, indent=4)
         with open("progress.json", "w") as outfile:
             outfile.write(formatted_list)
         print("created progress file")
+        print_list()
         initialized = 1
     elif initialized == 0:
         with open('progress.json', 'r') as openfile:
@@ -233,6 +270,9 @@ def tracking_mode():
             formatted_list = json.dumps(initial_list, indent=4)
             initialized = 1
             print_list()
+    if input_started == 0:
+        start_user_input()
+        input_started = 1
     for line in lines:
                 try:
                     curr_event = ndjson.loads(line.strip())
@@ -317,9 +357,12 @@ else:
         close_app()
     app_mode_selection()
     global initialized
+    global input_started
+    input_started = 0
     initialized = 0
-    t1 = threading.Thread(target=user_input, daemon=True)
-    t1.start()
+    global t1
+    #t1 = threading.Thread(target=user_input, daemon=True)
+    #t1.start()
     just_started = 1
     time.sleep(0.5)
     with open(journal_file_path) as f:
@@ -331,6 +374,7 @@ else:
                 continue
             if app_mode == "1":
                 just_started = 0
+                start_user_input()
                 log_mode()
             elif app_mode == "2":
                 just_started = 0
