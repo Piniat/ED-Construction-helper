@@ -164,6 +164,7 @@ def get_latest_journal():
 
 def user_input():
     time.sleep(1)
+    global app_mode
     while True:
         with patch_stdout():
             usr_input = prompt("> ", cursor=CursorShape.BLINKING_BLOCK)
@@ -174,9 +175,10 @@ def user_input():
             elif usr_input == "help":
                 print("List of commands: \n exit - exits the program \n app-mode-2 - switches to app to mode 2")
             elif usr_input == "app-mode-2":
-                global app_mode
                 app_mode = "2"
-
+            elif usr_input == "app-mode-1":
+                app_mode = "1"
+                
 def close_app():
     os._exit(0)
 
@@ -264,15 +266,6 @@ def tracking_mode():
                                     formatted_list = json.dumps(initial_list, indent=4)
                                 timestamp = event.get('timestamp')
                                 formatted_timestamp = timestamp.replace("T", " ").replace("Z", " ")
-                                os.system('clear')
-                                print("\n" + "-" * 60)
-                                print(f"{'Timestamp':<20}: {formatted_timestamp}")
-                                print("\n" + "-" * 60)
-                                print("Materials:")
-                                for material, amount in initial_list.items():
-                                    print(f"    {material.capitalize()}: {amount}")
-                                #print(formatted_list)
-                                print("\n" + "-" * 60)
                                 curr_material = event.get('Type')
                                 subtract = event.get('Count')
                                 saved_old_amount = int(initial_list.get(curr_material))
@@ -287,6 +280,15 @@ def tracking_mode():
                                         print(missing_key)
                                 #print(subtract)
                                 #print(saved_old_amount)
+                                os.system('clear')
+                                print("\n" + "-" * 60)
+                                print(f"{'Timestamp':<20}: {formatted_timestamp}")
+                                print("\n" + "-" * 60)
+                                print("Materials:")
+                                for material, amount in initial_list.items():
+                                    print(f"    {material.capitalize()}: {amount}")
+                                #print(formatted_list)
+                                print("\n" + "-" * 60)
                                 print(curr_material.capitalize() + " remaining: " + str(new_amount))
                 except json.JSONDecodeError:
                     print(f"Skipping invalid line: {line}")
@@ -302,6 +304,7 @@ def print_list():
         print(f"    {material.capitalize()}: {amount}")
     print("\n" + "-" * 60)
 
+os.system('clear')
 print("ED Colonisation helper v0.2.0 (added hardcoded shopping list :D) \n")
 if not os.path.isfile('config.ini'):
     path = input("Input game journal file path without quotes:  \n")
