@@ -149,29 +149,31 @@ def user_input():
                 time.sleep(1)
                 close_app()
             elif usr_input == "help":
-                print("List of commands: \n exit - exits the program \n app-mode-2 - switches to app to mode 2")
-            elif usr_input == "app-mode-2":
-                app_mode = "2"
+                print("List of commands: \n exit - exits the program \n app-mode-1 - switches app to journal monitoring mode \n app-mode-2 - switches to app to shopping list mode \n edit-shopping-list - allows you to edit shopping list in-app")
             elif usr_input == "app-mode-1":
                 app_mode = "1"
+            elif usr_input == "app-mode-2":
+                app_mode = "2"
             elif usr_input == "edit-shopping-list":
                 edit_list()
 def edit_list():
     if not os.path.isfile('progress.json'):
         print("Error no list detected, please make one first")
     else:
-        #with open('progress.json', 'w') as writefile:
-        #    initial_list = json.load(writefile)
-        #    key = prompt("Commodity name in all lower case and no spaces: \n")
-        #    value = prompt("New amount needed: \n")
-        #    key = key.strip()
-        #    value = value.strip()
-        #    key = key.replace(" ", "")
-        #    initial_list[key.lower()] = int(value)
-        #    formatted_list = json.dumps(initial_list, indent=4)
-        #    writefile.write(formatted_list)
-        #    print("done!")
-        print("Working on it! For now please edit the progress.json to change remaining needed values and add/remove stuff)")
+        with open('progress.json', 'r') as readfile:
+            loaded_list = json.load(readfile)
+            key = prompt("Commodity name in all lower case and no spaces: \n")
+            value = prompt("New amount needed: \n")
+            key = key.strip()
+            value = value.strip()
+            key = key.replace(" ", "")
+            loaded_list[key.lower()] = int(value)
+        with open('progress.json', 'w') as writefile:
+            formatted_list = json.dump(loaded_list, writefile, indent=4)
+            #writefile.write(formatted_list)
+        print("done!")
+        print_list()
+        #print("Working on it! For now please edit the progress.json to change remaining needed values and add/remove stuff)")
 
             
 
@@ -297,7 +299,7 @@ def tracking_mode():
                                         print(f"KeyError: {e}")
                                         missing_key = "Key formatting error or item not on list"
                                         print(missing_key)
-                                os.system('clear')
+                                clear_screen()
                                 print("\n" + "-" * 60)
                                 print(f"{'Timestamp':<20}: {formatted_timestamp}")
                                 print("\n" + "-" * 60)
@@ -316,7 +318,7 @@ def print_list():
     with open('progress.json', 'r') as openfile:
         initial_list = json.load(openfile)
     timestamp = generate_one_time_timestamp()
-    os.system('clear')
+    clear_screen()
     print("\n" + "-" * 60)
     print(f"Timestamp: {timestamp}")
     print("\n" + "-" * 60)
@@ -330,8 +332,11 @@ def generate_one_time_timestamp():
     now = datetime.now(local_tz)
     return now.strftime("%Y-%m-%d %H:%M:%S")
 
-os.system('clear')
-print("ED Colonisation helper v0.2.0-alpha (added hardcoded shopping list :D) \n")
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+clear_screen()
+print('ED Colonisation helper v0.3.0-alpha (added editing shopping list) \n Type "help" for a list of commands')
 if not os.path.isfile('config.ini'):
     path = input("Input game journal file path without quotes:  \n")
     config = configparser.ConfigParser() #initiates config parser
@@ -361,8 +366,6 @@ else:
     input_started = 0
     initialized = 0
     global t1
-    #t1 = threading.Thread(target=user_input, daemon=True)
-    #t1.start()
     just_started = 1
     time.sleep(0.5)
     with open(journal_file_path) as f:
