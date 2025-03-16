@@ -295,7 +295,7 @@ def tracking_mode():
                                         json.dump(initial_list, updateprogressfile, indent=4)
                                     except KeyError as e:
                                         print(f"KeyError: {e}")
-                                        missing_key = "Not Found"
+                                        missing_key = "Key formatting error or item not on list"
                                         print(missing_key)
                                 os.system('clear')
                                 print("\n" + "-" * 60)
@@ -374,7 +374,9 @@ else:
                 continue
             if app_mode == "1":
                 just_started = 0
-                start_user_input()
+                if input_started == 0:
+                    start_user_input()
+                    input_started = 1
                 log_mode()
             elif app_mode == "2":
                 just_started = 0
