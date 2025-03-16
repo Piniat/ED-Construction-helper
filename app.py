@@ -8,111 +8,92 @@ import threading
 from prompt_toolkit import prompt
 from prompt_toolkit.cursor_shapes import CursorShape
 from prompt_toolkit.patch_stdout import patch_stdout
+from datetime import datetime
+from tzlocal import get_localzone
+import pytz
 
 #functions  
+
+def template():
+    print("\n" + "-" * 60)
+    print(f"{'Timestamp':<20}: {formatted_timestamp}")
+    print(f"{'event':<20}: {event.get('event')}")
+
 def unhandled_event():
     print("\n" + "-" * 60)
     print("[Unhandled event]: " + event.get('event'))
 
 def game_shutdown():
-    print("\n" + "-" * 60)
-    print(f"{'Timestamp':<20}: {formatted_timestamp}")
-    print(f"{'event':<20}: {event.get('event')}")
+    template()
     print("\nGame shutdown detected. Exiting...")
     time.sleep(1)
     close_app()
         
 def start_jump():
-    print("\n" + "-" * 60)
-    print(f"{'Timestamp':<20}: {formatted_timestamp}")
-    print(f"{'event':<20}: {event.get('event')}")
+    template()
     print(f"{'Destination':<20}: {event.get('StarSystem')}")
     print(f"{'Star type':<20}: {event.get('StarClass')}")
 
 def docked():
-    print("\n" + "-" * 60)
-    print(f"{'Timestamp':<20}: {formatted_timestamp}")
-    print(f"{'event':<20}: {event.get('event')}")
+    template()
     print(f"{'Station Name':<20}: {event.get('StationName')}")
     print(f"{'Station Type':<20}: {event.get('StationType')}")
 
 def undocked():
-    print("\n" + "-" * 60)
-    print(f"{'Timestamp':<20}: {formatted_timestamp}")
-    print(f"{'event':<20}: {event.get('event')}")
+    template()
     print(f"{'Station Name':<20}: {event.get('StationName')}")
     print(f"{'Station Type':<20}: {event.get('StationType')}")
 
 def docking_cancelled():
-    print("\n" + "-" * 60)
-    print(f"{'Timestamp':<20}: {formatted_timestamp}")
-    print(f"{'event':<20}: {event.get('event')}")
+    template()
     print(f"{'Station Name':<20}: {event.get('StationName')}")
     print(f"{'Station Type':<20}: {event.get('StationType')}")
 
 def docking_denied():
-    print("\n" + "-" * 60)
-    print(f"{'Timestamp':<20}: {formatted_timestamp}")
-    print(f"{'event':<20}: {event.get('event')}")
+    template()
     print(f"{'Station Name':<20}: {event.get('StationName')}")
     print(f"{'Station Type':<20}: {event.get('StationType')}")
     print(f"{'Reason':<20}: {event.get('Reason')}")
 
 def docking_granted():
-    print("\n" + "-" * 60)
-    print(f"{'Timestamp':<20}: {formatted_timestamp}")
-    print(f"{'event':<20}: {event.get('event')}")
+    template()
     print(f"{'Station Name':<20}: {event.get('StationName')}")
     print(f"{'Station Type':<20}: {event.get('StationType')}")
     print(f"{'Pad':<20}: {event.get('LandingPad')}")
 
 def docking_timeout():
-    print("\n" + "-" * 60)
-    print(f"{'Timestamp':<20}: {formatted_timestamp}")
-    print(f"{'event':<20}: {event.get('event')}")
+    template()
     print(f"{'Station Name':<20}: {event.get('StationName')}")
     print(f"{'Station Type':<20}: {event.get('StationType')}")
 
 def music():
-    print("\n" + "-" * 60)
-    print(f"{'Timestamp':<20}: {formatted_timestamp}")
-    print(f"{'event':<20}: {event.get('event')}")
+    template()
     print(f"{'Music Track':<20}: {event.get('MusicTrack')}")
 
 def commander():
-    print("\n" + "-" * 60)
-    print(f"{'Timestamp':<20}: {formatted_timestamp}")
-    print(f"{'event':<20}: {event.get('event')}")
+    template()
     print(f"{'Name':<20}: {event.get('Name')}")
     print(f"{'Player id':<20}: {event.get('FID')}")
 
 def resurrect():
-    print("\n" + "-" * 60)
-    print(f"{'Timestamp':<20}: {formatted_timestamp}")
-    print(f"{'event':<20}: {event.get('event')}")
+    template()
     print(f"{'Option':<20}: {event.get('Option')}")
     print(f"{'Cost':<20}: {event.get('Cost')}")
     print(f"{'Bankrupt':<20}: {event.get('Bankrupt')}")
 
 def death():
-    print("\n" + "-" * 60)
-    print(f"{'Timestamp':<20}: {formatted_timestamp}")
-    print(f"{'event':<20}: {event.get('event')}")
+    template()
     print(f"{'Killer name':<20}: {event.get('KillerName')}")
     print(f"{'Killer ship':<20}: {event.get('KillerShip')}")
     print(f"{'Killer rank':<20}: {event.get('KillerRank')}")
 
 def friends():
-    print("\n" + "-" * 60)
-    print(f"{'Timestamp':<20}: {formatted_timestamp}")
-    print(f"{'event':<20}: {event.get('event')}")
+    template()
     print(f"{'Name':<20}: {event.get('Name')}")
     print(f"{'Status':<20}: {event.get('Status')}")
 
 def materials():
-    print("\n" + "-" * 60)
-    print(f"{'Timestamp':<20}: {formatted_timestamp}")
-    print(f"{'event':<20}: {event.get('event')}")
+    template()
     raw_array = event.get('Raw')
     print("\n" + "*" * 30 + "\n Raw")
     for name in raw_array:
@@ -127,27 +108,21 @@ def materials():
         print(f"{name['Name']:<20}: {name['Count']}")
     
 def header():
-    print("\n" + "-" * 60)
-    print(f"{'Timestamp':<20}: {formatted_timestamp}")
-    print(f"{'event':<20}: {event.get('event')}")
+    template()
     print(f"{'Part':<20}: {event.get('part')}")
     print(f"{'Language':<20}: {event.get('language')}")
     print(f"{'Game version':<20}: {event.get('gameversion')}")
     print(f"{'Build':<20}: {event.get('build')}")
 
 def rank():
-    print("\n" + "-" * 60)
-    print(f"{'Timestamp':<20}: {formatted_timestamp}")
-    print(f"{'event':<20}: {event.get('event')}")
+    template()
     print(f"{'Combat':<20}: {event.get('Combat')}")
     print(f"{'Trade':<20}: {event.get('Trade')}")
     print(f"{'Exploration':<20}: {event.get('Explore')}")
     print(f"{'CQC':<20}: {event.get('CQC')}")
 
 def marketbuy():
-    print("\n" + "-" * 60)
-    print(f"{'Timestamp':<20}: {formatted_timestamp}")
-    print(f"{'event':<20}: {event.get('event')}")
+    template()
     print(f"{'MarketID':<20}: {event.get('MarketID')}")
     print(f"{'Type':<20}: {event.get('Type')}")
     print(f"{'Count':<20}: {event.get('Count')}")
@@ -188,6 +163,13 @@ def app_mode_selection():
     if app_mode == "exit":
         close_app()
 
+def convert_timestamp(ed_timestamp):
+    utc_time = datetime.strptime(ed_timestamp, "%Y-%m-%dT%H:%M:%SZ")
+    utc_time = pytz.utc.localize(utc_time)
+    local_tz = get_localzone()
+    local_time = utc_time.astimezone(local_tz)
+    return local_time.strftime("%Y-%m-%d %H:%M:%S")
+
 def log_mode():
     for line in lines:
                 try:
@@ -196,7 +178,8 @@ def log_mode():
                     for event in curr_event:
                         timestamp = event.get('timestamp')
                         global formatted_timestamp
-                        formatted_timestamp = timestamp.replace("T", " ").replace("Z", "")
+                        ed_timestamp=timestamp
+                        formatted_timestamp = convert_timestamp(ed_timestamp)
                         if event.get('event') == "Shutdown":
                             game_shutdown()
                         elif event.get('event') == "StartJump":
@@ -237,7 +220,6 @@ def log_mode():
 
 def tracking_mode():
     global initialized
-    #print("tracking mode active")
     if not os.path.isfile('progress.json') and initialized == 0:
         initial_list = {"aluminium":7143, "buildingfabricators":394, "ceramiccomposites":816, "cmmcomposite":6800, "computercomponents":98, "copper":390, "emergencypowercells":71, "evacuationshelter":203, "foodcartridges":139, "fruitandvegetables":97, "liquidoxygen":2455, "medicaldiagnosticequipment":46, "nonleathalweapons":33, "polymers":672, "powergenerators":70, "semiconductors":101, "steel":10659, "structuralregulators":665, "superconductors":134, "surfacestabilisers":603, "survivalequipment":57, "landenrichmentsystems":69, "titanium":5498}
         formatted_list = json.dumps(initial_list, indent=4)
@@ -249,12 +231,8 @@ def tracking_mode():
         with open('progress.json', 'r') as openfile:
             initial_list = json.load(openfile)
             formatted_list = json.dumps(initial_list, indent=4)
-            #print("loaded progress")
-            #print(formatted_list)
             initialized = 1
             print_list()
-    #print(formatted_list)
-    #print(initialized)
     for line in lines:
                 try:
                     curr_event = ndjson.loads(line.strip())
@@ -265,7 +243,8 @@ def tracking_mode():
                                     initial_list = json.load(openfile)
                                     formatted_list = json.dumps(initial_list, indent=4)
                                 timestamp = event.get('timestamp')
-                                formatted_timestamp = timestamp.replace("T", " ").replace("Z", " ")
+                                ed_timestamp=timestamp
+                                formatted_timestamp = convert_timestamp(ed_timestamp)
                                 curr_material = event.get('Type')
                                 subtract = event.get('Count')
                                 saved_old_amount = int(initial_list.get(curr_material))
@@ -278,8 +257,6 @@ def tracking_mode():
                                         print(f"KeyError: {e}")
                                         missing_key = "Not Found"
                                         print(missing_key)
-                                #print(subtract)
-                                #print(saved_old_amount)
                                 os.system('clear')
                                 print("\n" + "-" * 60)
                                 print(f"{'Timestamp':<20}: {formatted_timestamp}")
@@ -298,16 +275,23 @@ def tracking_mode():
 def print_list():
     with open('progress.json', 'r') as openfile:
         initial_list = json.load(openfile)
-        formatted_list = json.dumps(initial_list, indent=4)
+    timestamp = generate_one_time_timestamp()
     os.system('clear')
+    print("\n" + "-" * 60)
+    print(f"Timestamp: {timestamp}")
     print("\n" + "-" * 60)
     print("Materials:")
     for material, amount in initial_list.items():
         print(f"    {material.capitalize()}: {amount}")
     print("\n" + "-" * 60)
 
+def generate_one_time_timestamp():
+    local_tz = get_localzone()
+    now = datetime.now(local_tz)
+    return now.strftime("%Y-%m-%d %H:%M:%S")
+
 os.system('clear')
-print("ED Colonisation helper v0.2.0 (added hardcoded shopping list :D) \n")
+print("ED Colonisation helper v0.2.0-alpha (added hardcoded shopping list :D) \n")
 if not os.path.isfile('config.ini'):
     path = input("Input game journal file path without quotes:  \n")
     config = configparser.ConfigParser() #initiates config parser
@@ -349,7 +333,6 @@ else:
                 just_started = 0
                 log_mode()
             elif app_mode == "2":
-                #print("tracking mode")
                 just_started = 0
                 tracking_mode()
             else:
