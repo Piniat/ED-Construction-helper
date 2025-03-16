@@ -290,6 +290,8 @@ def tracking_mode():
                                 #print(formatted_list)
                                 print("\n" + "-" * 60)
                                 print(curr_material.capitalize() + " remaining: " + str(new_amount))
+                            elif event.get('event') == "Shutdown":
+                                game_shutdown()
                 except json.JSONDecodeError:
                     print(f"Skipping invalid line: {line}")
                     continue
