@@ -347,7 +347,7 @@ def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 clear_screen()
-print('ED Colonisation helper v0.3.0-alpha (added editing shopping list) \n Type "help" for a list of commands')
+print('ED Colonisation helper v0.3.2-alpha (added editing shopping list) \n Type "help" for a list of commands')
 if not os.path.isfile('config.ini'):
     path = input("Input game journal file path without quotes:  \n")
     config = configparser.ConfigParser() #initiates config parser
