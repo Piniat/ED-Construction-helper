@@ -11,7 +11,6 @@ from prompt_toolkit.patch_stdout import patch_stdout
 from datetime import datetime
 from tzlocal import get_localzone
 import pytz
-import sys
 
 #functions  
 
@@ -162,19 +161,31 @@ def edit_list():
     else:
         with open('progress.json', 'r') as readfile:
             loaded_list = json.load(readfile)
-            key = prompt("Commodity name in all lower case and no spaces: \n")
-            value = prompt("New amount needed: \n")
-            key = key.strip()
-            value = value.strip()
-            key = key.replace(" ", "")
-            loaded_list[key.lower()] = int(value)
+            option = prompt("1- Edit/Add \n2-Remove \n")
+            if option == "1":
+                key = prompt("Commodity name in all lower case and no spaces: \n")
+                value = prompt("New amount needed: \n")
+                key = key.strip()
+                value = value.strip()
+                key = key.replace(" ", "")
+                loaded_list[key.lower()] = int(value)
+            elif option == "2":
+                key = prompt("Commodity name in all lower case and no spaces: \n")
+                key = key.strip()
+                key = key.replace(" ", "")
+                if key in loaded_list:
+                    del loaded_list[key]
+                    print(f"{key} removed from list")
+                else:
+                    print(f"{key} not found")
+            else:
+                print("Invalid choice. Please enter 'add', 'edit', or 'remove'.")
         with open('progress.json', 'w') as writefile:
-            formatted_list = json.dump(loaded_list, writefile, indent=4)
+            json.dump(loaded_list, writefile, indent=4)
             #writefile.write(formatted_list)
         print("done!")
         print_list()
         #print("Working on it! For now please edit the progress.json to change remaining needed values and add/remove stuff)")
-
             
 
 def start_user_input():
