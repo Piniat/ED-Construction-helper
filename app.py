@@ -346,6 +346,80 @@ def generate_one_time_timestamp():
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
+def delivery_tracker():
+    global initialized
+    global input_started
+    if input_started == 0:
+        start_user_input()
+        input_started = 1
+    for line in lines:
+                try:
+                    curr_event = ndjson.loads(line.strip())
+                    global event
+                    for event in curr_event:
+                            if event.get('event') == "Docked" and "colonisationcontribution" in event.get('StationServices', []):
+                                docked_at_construction = True
+                                print("Any cargo transfer will count towards construction progress")
+                            elif event.get('event') == "Shutdown":
+                                game_shutdown()
+                except json.JSONDecodeError:
+                    print(f"Skipping invalid line: {line}")
+                    continue
+
+def testing_stuff():
+    global opened_json
+    global journal_folder
+    global ship_docked
+    updated_cargo = {}
+    global input_started
+    if input_started == 0:
+        start_user_input()
+        input_started = 1
+    cargo_file = os.path.join(journal_folder, "Cargo.json")
+    for line in lines:
+        try:
+            curr_event = ndjson.loads(line.strip())
+            global event
+            for event in curr_event:
+                if event.get('event') == "Docked":
+                    print("Any cargo transfer will count towards construction progress")
+                    ship_docked = True
+                elif event.get('event') == "Undocked":
+                    ship_docked = False
+                elif event.get('event') == "MarketBuy":
+                    print(f"Bought {event.get('Type')}: {event.get('Count')}")
+                elif event.get('event') == "Shutdown":
+                    game_shutdown()
+        except json.JSONDecodeError:
+            print(f"Skipping invalid line: {line}")
+            continue
+        print(ship_docked)
+        if ship_docked == True:
+            with open (cargo_file, "r") as cargo:
+                try:
+                    cargo_data = json.load(cargo)
+                    current_cargo_list = cargo_data.get("Inventory", [])
+                    current_cargo_data = {cargo_data['Name']: cargo_data['Count'] for cargo_data in current_cargo_list}
+                    if current_cargo_data != updated_cargo:
+                        print("Cargo change detected")
+                        for item_name, item_count in current_cargo_data.items():
+                            if item_name not in updated_cargo:
+                                print("\n" + "-" * 60)
+                                generate_one_time_timestamp()
+                                print(f"New cargo detected: {item_name} - {item_count} tonnes")
+                            elif item_count > updated_cargo.get(item_name, 0):
+                                print("\n" + "-" * 60)
+                                generate_one_time_timestamp()
+                                print(f"Bought/transferred {item_name}: {item_count - updated_cargo[item_name]} tonnes")
+                            elif item_count < updated_cargo.get(item_name, 0):
+                                print("\n" + "-" * 60)
+                                generate_one_time_timestamp()
+                                print(f"Delivered: {updated_cargo[item_name] - item_count} tonnes")
+                        updated_cargo = current_cargo_data  # Update the cargo state
+                except (json.JSONDecodeError, FileNotFoundError) as e:
+                    print(f"Error reading cargo file: {e}")
+        time.sleep(0.5)
+
 clear_screen()
 print('ED Colonisation helper v0.3.2-alpha (added editing shopping list) \n Type "help" for a list of commands')
 if not os.path.isfile('config.ini'):
@@ -361,6 +435,7 @@ else:
     config = configparser.ConfigParser()
     config.read('config.ini')
     config.sections()
+    global journal_folder
     journal_folder = config['JOURNAL_PATH']['path']
     journal_file_path = get_latest_journal()
     if journal_file_path == "None":
@@ -374,9 +449,13 @@ else:
     app_mode_selection()
     global initialized
     global input_started
+    global ship_docked
+    global opened_json
+    global t1
+    opened_json = False
+    ship_docked = False
     input_started = 0
     initialized = 0
-    global t1
     just_started = 1
     time.sleep(0.5)
     with open(journal_file_path) as f:
@@ -395,7 +474,9 @@ else:
             elif app_mode == "2":
                 just_started = 0
                 tracking_mode()
-            else:
+            elif app_mode == "3":
                 just_started = 0
-                print("Unimplemented")
+                #delivery_tracker()
+                testing_stuff()
+                
                 
