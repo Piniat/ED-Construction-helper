@@ -171,7 +171,7 @@ def user_input():
                     print("Error. Please choose y or n")
             elif usr_input == "override-docked-construction":
                 print("Current status: ", docked_at_construction)
-                state_colon = prompt("Are you docked at a place where colonisation contributions are accepted? y/n")
+                state_colon = prompt("Are you docked at a place where colonisation contributions are accepted? y/n \n> ")
                 if state_colon == "y":
                     docked_at_construction = True
                     print("Current status: ", docked_at_construction)
@@ -182,6 +182,11 @@ def user_input():
                     print("Error. Please choose y or n")
             elif usr_input == "edit-shopping-list":
                 edit_list()
+            elif usr_input == "edit-construction-progress":
+                    edit_colonisation_progress()
+            else:
+                print('Error. Invalid command. Type "help" for a list of commands')
+            
 def edit_list():
     if not os.path.isfile('progress.json'):
         print("Error no list detected, please make one first")
@@ -211,6 +216,36 @@ def edit_list():
             json.dump(loaded_list, writefile, indent=4)
         print("done!")
         print_list()
+
+def edit_colonisation_progress():
+    if not os.path.isfile('Construction_progress.json'):
+        print("Error no list detected, please make one first")
+    else:
+        with open('Construction_progress.json', 'r') as readfile:
+            loaded_list = json.load(readfile)
+            option = prompt("1- Edit/Add \n2-Remove \n")
+            if option == "1":
+                key = prompt("Commodity name in all lower case and no spaces: \n")
+                value = prompt("New amount to deliver: \n")
+                key = key.strip()
+                value = value.strip()
+                key = key.replace(" ", "")
+                loaded_list[key.lower()] = int(value)
+            elif option == "2":
+                key = prompt("Commodity name in all lower case and no spaces: \n")
+                key = key.strip()
+                key = key.replace(" ", "")
+                if key in loaded_list:
+                    del loaded_list[key]
+                    print(f"{key} removed from list")
+                else:
+                    print(f"{key} not found")
+            else:
+                print("Invalid choice. Please enter 'add', 'edit', or 'remove'.")
+        with open('progress.json', 'w') as writefile:
+            json.dump(loaded_list, writefile, indent=4)
+        print("done!")
+
             
 
 def start_user_input():
@@ -390,14 +425,18 @@ def create_progress_tracking():
         with open("Construction_progress.json", "w") as outfile:
             outfile.write(formatted_list)
 
-def testing_stuff():
+def colonisation_tracker():
     global opened_json
     global journal_folder
     global ship_docked
     global docked_at_construction
     global input_started
     global updated_cargo
-    # Ensure Construction_progress.json exists
+    global initialized
+    if initialized == 0:
+        clear_screen()
+        print_construction_progress()
+        initialized = 1
     if not os.path.isfile("Construction_progress.json"):
         with open("Construction_progress.json", "w") as progress_file:
             create_progress_tracking()
@@ -422,16 +461,14 @@ def testing_stuff():
                     ship_docked = False
                     docked_at_construction = False
 
-                elif event.get('event') == "MarketBuy":
-                    print(f"Bought {event.get('Type')}: {event.get('Count')}")
-
+                #elif event.get('event') == "MarketBuy":
+                #    print(f"Bought {event.get('Type')}: {event.get('Count')}")
+#
                 elif event.get('event') == "Shutdown":
                     game_shutdown()
         except json.JSONDecodeError:
             print(f"Skipping invalid line: {line}")
             continue
-        #print(f"Ship docked: {ship_docked}, Docked at construction: {docked_at_construction}")
-        # Check cargo only if docked
         if ship_docked:
             try:
                 with open(cargo_file, "r") as cargo:
@@ -439,14 +476,17 @@ def testing_stuff():
                     current_cargo_list = cargo_data.get("Inventory", [])
                     current_cargo_data = {item['Name']: item['Count'] for item in current_cargo_list}
                     if current_cargo_data != updated_cargo:
-                        print("Cargo change detected")
+                        #print("Cargo change detected")
                         for item_name, item_count in current_cargo_data.items():
                             if docked_at_construction:
                                 if item_name not in updated_cargo:
+                                    print_construction_progress()
                                     print(f"New cargo detected: {item_name} - {item_count} tonnes")
                                 elif item_count > updated_cargo.get(item_name, 0):
+                                    print_construction_progress()
                                     print(f"Bought/transferred {item_name}: {item_count - updated_cargo[item_name]} tonnes")
                                 elif item_count < updated_cargo.get(item_name, 0):
+                                    print_construction_progress()
                                     delivered_amount = updated_cargo[item_name] - item_count
                                     print(f"Delivered: {delivered_amount} tonnes of {item_name}")
                                     # Update Construction_progress.json
@@ -468,16 +508,33 @@ def testing_stuff():
                                         print(f"Error updating Construction_progress.json: {e}")
                             else:
                                 if item_name not in updated_cargo:
+                                    print_construction_progress()
                                     print(f"New cargo detected: {item_name} - {item_count} tonnes")
                                 elif item_count > updated_cargo.get(item_name, 0):
+                                    print_construction_progress()
                                     print(f"Bought/transferred {item_name}: {item_count - updated_cargo[item_name]} tonnes")
                                 elif item_count < updated_cargo.get(item_name, 0):
-                                    print(f"Stored: {updated_cargo[item_name] - item_count} tonnes")
+                                    print_construction_progress()
+                                    print(f"Stored: {updated_cargo[item_name] - item_count} tonnes of {item_name}")
                         updated_cargo = current_cargo_data  # Update cargo state
             except (json.JSONDecodeError, FileNotFoundError) as e:
                 print(f"Error reading cargo file: {e}")
         time.sleep(0.5)
 
+def print_construction_progress():
+    clear_screen()
+    timestamp = generate_one_time_timestamp()
+    print("\n" + "-" * 60)
+    print(timestamp)
+    print("\n" + "-" * 60)
+    try:
+        with open('Construction_progress.json', "r") as progress:
+            progress_data = json.load(progress)
+            for item, count in progress_data.items():
+                print(f"{item}: {count}")
+        print("\n" + "-" * 60)
+    except (json.JSONDecodeError, FileNotFoundError) as e:
+                print(f"Error reading cargo file: {e}")
 
 clear_screen()
 print('ED Colonisation helper v0.3.2-alpha (added editing shopping list) \n Type "help" for a list of commands')
@@ -547,6 +604,6 @@ else:
             elif app_mode == "3":
                 just_started = 0
                 #delivery_tracker()
-                testing_stuff()
+                colonisation_tracker()
                 
                 
