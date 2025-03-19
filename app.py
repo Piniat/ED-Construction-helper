@@ -11,6 +11,7 @@ from prompt_toolkit.patch_stdout import patch_stdout
 from datetime import datetime
 from tzlocal import get_localzone
 import pytz
+import shutil
 
 #functions  
 
@@ -140,6 +141,8 @@ def get_latest_journal():
 def user_input():
     time.sleep(1)
     global app_mode
+    global ship_docked
+    global docked_at_construction
     while True:
         with patch_stdout():
             usr_input = prompt("> ", cursor=CursorShape.BLINKING_BLOCK)
@@ -148,11 +151,35 @@ def user_input():
                 time.sleep(1)
                 close_app()
             elif usr_input == "help":
-                print("List of commands: \n exit - exits the program \n app-mode-1 - switches app to journal monitoring mode \n app-mode-2 - switches to app to shopping list mode \n edit-shopping-list - allows you to edit shopping list in-app")
+                print("List of commands: \n exit - exits the program \n app-mode-1 - switches app to journal monitoring mode \n app-mode-2 - switches to app to shopping list mode \n app-mode-3 - switches to construction progress tracking \n edit-shopping-list - allows you to edit shopping list in-app \n override-docked - overrides docked status in mode 3 \n override-docked-construction - overrides if you are docked at a constructions site / megaship (any cargo removed from your hold will be counted towards progress to buiding)")
             elif usr_input == "app-mode-1":
                 app_mode = "1"
             elif usr_input == "app-mode-2":
                 app_mode = "2"
+            elif usr_input == "app-mode-3":
+                app_mode = "3"
+            elif usr_input == "override-docked":
+                print("Current status: ", ship_docked)
+                state = prompt("Are you docked? y/n \n> ")
+                if state == "y":
+                    ship_docked = True
+                    print("Current status: ", ship_docked)
+                elif state == "n":
+                    ship_docked == False
+                    print("Current status: ", ship_docked)
+                else:
+                    print("Error. Please choose y or n")
+            elif usr_input == "override-docked-construction":
+                print("Current status: ", docked_at_construction)
+                state_colon = prompt("Are you docked at a place where colonisation contributions are accepted? y/n")
+                if state_colon == "y":
+                    docked_at_construction = True
+                    print("Current status: ", docked_at_construction)
+                elif state_colon == "n":
+                    docked_at_construction = False
+                    print("Current status: ", docked_at_construction)
+                else:
+                    print("Error. Please choose y or n")
             elif usr_input == "edit-shopping-list":
                 edit_list()
 def edit_list():
@@ -182,10 +209,8 @@ def edit_list():
                 print("Invalid choice. Please enter 'add', 'edit', or 'remove'.")
         with open('progress.json', 'w') as writefile:
             json.dump(loaded_list, writefile, indent=4)
-            #writefile.write(formatted_list)
         print("done!")
         print_list()
-        #print("Working on it! For now please edit the progress.json to change remaining needed values and add/remove stuff)")
             
 
 def start_user_input():
@@ -346,32 +371,37 @@ def generate_one_time_timestamp():
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def delivery_tracker():
-    global initialized
-    global input_started
-    if input_started == 0:
-        start_user_input()
-        input_started = 1
-    for line in lines:
-                try:
-                    curr_event = ndjson.loads(line.strip())
-                    global event
-                    for event in curr_event:
-                            if event.get('event') == "Docked" and "colonisationcontribution" in event.get('StationServices', []):
-                                docked_at_construction = True
-                                print("Any cargo transfer will count towards construction progress")
-                            elif event.get('event') == "Shutdown":
-                                game_shutdown()
-                except json.JSONDecodeError:
-                    print(f"Skipping invalid line: {line}")
-                    continue
+def create_progress_tracking():
+    print("Need to create file")
+    progress_list = {}
+    copy_progress = prompt("Copy from shopping list? (Progress.json) y/n \n> ", cursor=CursorShape.BLINKING_BLOCK)
+    if copy_progress == "y":
+        shutil.copyfile('progress.json', 'Construction_progress.json')
+    elif copy_progress == "n":
+        item_amount = int(prompt("How many different commodities do you need for construction? \n> ", cursor=CursorShape.BLINKING_BLOCK))
+        for i in range(item_amount):
+            key = prompt("Commodity name in all lower case and no spaces: \n")
+            value = prompt("Amount needed: \n")
+            key = key.strip()
+            value = value.strip()
+            key = key.replace(" ", "")
+            progress_list[key.lower()] = int(value)
+        formatted_list = json.dumps(progress_list, indent=4)
+        with open("Construction_progress.json", "w") as outfile:
+            outfile.write(formatted_list)
 
 def testing_stuff():
     global opened_json
     global journal_folder
     global ship_docked
-    updated_cargo = {}
+    global docked_at_construction
     global input_started
+    global updated_cargo
+    # Ensure Construction_progress.json exists
+    if not os.path.isfile("Construction_progress.json"):
+        with open("Construction_progress.json", "w") as progress_file:
+            create_progress_tracking()
+    # Start user input if not started
     if input_started == 0:
         start_user_input()
         input_started = 1
@@ -379,46 +409,75 @@ def testing_stuff():
     for line in lines:
         try:
             curr_event = ndjson.loads(line.strip())
-            global event
             for event in curr_event:
                 if event.get('event') == "Docked":
-                    print("Any cargo transfer will count towards construction progress")
+                    print("Docked at a station")
                     ship_docked = True
+                    if "colonisationcontribution" in event.get('StationServices', []):
+                        print("Docked at a construction ship, tracking deliveries.")
+                        docked_at_construction = True
+                    else:
+                        docked_at_construction = False
                 elif event.get('event') == "Undocked":
                     ship_docked = False
+                    docked_at_construction = False
+
                 elif event.get('event') == "MarketBuy":
                     print(f"Bought {event.get('Type')}: {event.get('Count')}")
+
                 elif event.get('event') == "Shutdown":
                     game_shutdown()
         except json.JSONDecodeError:
             print(f"Skipping invalid line: {line}")
             continue
-        print(ship_docked)
-        if ship_docked == True:
-            with open (cargo_file, "r") as cargo:
-                try:
+        #print(f"Ship docked: {ship_docked}, Docked at construction: {docked_at_construction}")
+        # Check cargo only if docked
+        if ship_docked:
+            try:
+                with open(cargo_file, "r") as cargo:
                     cargo_data = json.load(cargo)
                     current_cargo_list = cargo_data.get("Inventory", [])
-                    current_cargo_data = {cargo_data['Name']: cargo_data['Count'] for cargo_data in current_cargo_list}
+                    current_cargo_data = {item['Name']: item['Count'] for item in current_cargo_list}
                     if current_cargo_data != updated_cargo:
                         print("Cargo change detected")
                         for item_name, item_count in current_cargo_data.items():
-                            if item_name not in updated_cargo:
-                                print("\n" + "-" * 60)
-                                generate_one_time_timestamp()
-                                print(f"New cargo detected: {item_name} - {item_count} tonnes")
-                            elif item_count > updated_cargo.get(item_name, 0):
-                                print("\n" + "-" * 60)
-                                generate_one_time_timestamp()
-                                print(f"Bought/transferred {item_name}: {item_count - updated_cargo[item_name]} tonnes")
-                            elif item_count < updated_cargo.get(item_name, 0):
-                                print("\n" + "-" * 60)
-                                generate_one_time_timestamp()
-                                print(f"Delivered: {updated_cargo[item_name] - item_count} tonnes")
-                        updated_cargo = current_cargo_data  # Update the cargo state
-                except (json.JSONDecodeError, FileNotFoundError) as e:
-                    print(f"Error reading cargo file: {e}")
+                            if docked_at_construction:
+                                if item_name not in updated_cargo:
+                                    print(f"New cargo detected: {item_name} - {item_count} tonnes")
+                                elif item_count > updated_cargo.get(item_name, 0):
+                                    print(f"Bought/transferred {item_name}: {item_count - updated_cargo[item_name]} tonnes")
+                                elif item_count < updated_cargo.get(item_name, 0):
+                                    delivered_amount = updated_cargo[item_name] - item_count
+                                    print(f"Delivered: {delivered_amount} tonnes of {item_name}")
+                                    # Update Construction_progress.json
+                                    try:
+                                        if os.path.isfile("Construction_progress.json"):
+                                            with open("Construction_progress.json", "r") as progress_file:
+                                                progress_data = json.load(progress_file)
+                                        else:
+                                            progress_data = {}
+                                        # Update delivered amount
+                                        if item_name in progress_data:
+                                            progress_data[item_name] -= delivered_amount
+                                        else:
+                                            progress_data[item_name] = delivered_amount
+                                        # Write updated progress to file
+                                        with open("Construction_progress.json", "w") as update_file:
+                                            json.dump(progress_data, update_file, indent=4)
+                                    except (json.JSONDecodeError, FileNotFoundError) as e:
+                                        print(f"Error updating Construction_progress.json: {e}")
+                            else:
+                                if item_name not in updated_cargo:
+                                    print(f"New cargo detected: {item_name} - {item_count} tonnes")
+                                elif item_count > updated_cargo.get(item_name, 0):
+                                    print(f"Bought/transferred {item_name}: {item_count - updated_cargo[item_name]} tonnes")
+                                elif item_count < updated_cargo.get(item_name, 0):
+                                    print(f"Stored: {updated_cargo[item_name] - item_count} tonnes")
+                        updated_cargo = current_cargo_data  # Update cargo state
+            except (json.JSONDecodeError, FileNotFoundError) as e:
+                print(f"Error reading cargo file: {e}")
         time.sleep(0.5)
+
 
 clear_screen()
 print('ED Colonisation helper v0.3.2-alpha (added editing shopping list) \n Type "help" for a list of commands')
@@ -452,6 +511,17 @@ else:
     global ship_docked
     global opened_json
     global t1
+    global docked_at_construction
+    global file_detected
+    global updated_cargo
+    cargo_file = os.path.join(journal_folder, "Cargo.json")
+    with open(cargo_file, "r") as cargo:
+        cargo_data = json.load(cargo)
+        current_cargo_list = cargo_data.get("Inventory", [])
+        current_cargo_data = {item['Name']: item['Count'] for item in current_cargo_list}
+    updated_cargo = current_cargo_data
+    file_detected = True
+    docked_at_construction = False
     opened_json = False
     ship_docked = False
     input_started = 0
