@@ -379,11 +379,12 @@ def tracking_mode():
                                 print("\n" + "-" * 60)
                                 print(f"{'Timestamp':<20}: {formatted_timestamp}")
                                 print("\n" + "-" * 60)
-                                print("Materials:")
-                                for material, amount in initial_list.items():
-                                    print(f"    {material.capitalize()}: {amount}")
-                                #print(formatted_list)
-                                print("\n" + "-" * 60)
+                                #print("Materials:")
+                                #for material, amount in initial_list.items():
+                                #    print(f"    {material.capitalize()}: {amount}")
+                                ##print(formatted_list)
+                                #print("\n" + "-" * 60)
+                                print_list()
                                 print(curr_material.capitalize() + " remaining: " + str(new_amount))
                             elif event.get('event') == "Shutdown":
                                 game_shutdown()
@@ -475,62 +476,102 @@ def colonisation_tracker():
                 elif event.get('event') == "Undocked":
                     ship_docked = False
                     docked_at_construction = False
+                    print("Undocked from station")
                 elif event.get('event') == "Shutdown":
                     game_shutdown()
         except json.JSONDecodeError:
             print(f"Skipping invalid line: {line}")
             continue
-        if ship_docked:
-            try:
-                with open(cargo_file, "r") as cargo:
-                    cargo_data = json.load(cargo)
-                    current_cargo_list = cargo_data.get("Inventory", [])
-                    current_cargo_data = {item['Name']: item['Count'] for item in current_cargo_list}
-                    if current_cargo_data != updated_cargo:
-                        #print("Cargo change detected")
-                        for item_name, item_count in current_cargo_data.items():
-                            if docked_at_construction:
-                                if item_name not in updated_cargo:
-                                    print_construction_progress()
-                                    print(f"New cargo detected: {item_name} - {item_count} tonnes")
-                                elif item_count > updated_cargo.get(item_name, 0):
-                                    print_construction_progress()
-                                    print(f"Bought/transferred {item_name}: {item_count - updated_cargo[item_name]} tonnes")
-                                elif item_count < updated_cargo.get(item_name, 0):
-                                    print_construction_progress()
-                                    delivered_amount = updated_cargo[item_name] - item_count
-                                    print(f"Delivered: {delivered_amount} tonnes of {item_name}")
-                                    # Update Construction_progress.json
-                                    try:
-                                        if os.path.isfile("Construction_progress.json"):
-                                            with open("Construction_progress.json", "r") as progress_file:
-                                                progress_data = json.load(progress_file)
-                                        else:
-                                            progress_data = {}
-                                        # Update delivered amount
-                                        if item_name in progress_data:
-                                            progress_data[item_name] -= delivered_amount
-                                        else:
-                                            progress_data[item_name] = delivered_amount
-                                        # Write updated progress to file
-                                        with open("Construction_progress.json", "w") as update_file:
-                                            json.dump(progress_data, update_file, indent=4)
-                                    except (json.JSONDecodeError, FileNotFoundError) as e:
-                                        print(f"Error updating Construction_progress.json: {e}")
-                            else:
-                                if item_name not in updated_cargo:
-                                    print_construction_progress()
-                                    print(f"New cargo detected: {item_name} - {item_count} tonnes")
-                                elif item_count > updated_cargo.get(item_name, 0):
-                                    print_construction_progress()
-                                    print(f"Bought/transferred {item_name}: {item_count - updated_cargo[item_name]} tonnes")
-                                elif item_count < updated_cargo.get(item_name, 0):
-                                    print_construction_progress()
-                                    print(f"Stored: {updated_cargo[item_name] - item_count} tonnes of {item_name}")
-                        updated_cargo = current_cargo_data  # Update cargo state
-            except (json.JSONDecodeError, FileNotFoundError) as e:
-                print(f"Error reading cargo file: {e}")
-        time.sleep(0.5)
+    if ship_docked:
+        try:
+            with open(cargo_file, "r") as cargo:
+                cargo_data = json.load(cargo)
+                current_cargo_list = cargo_data.get("Inventory", [])
+                current_cargo_data = {item['Name']: item['Count'] for item in current_cargo_list}
+                if current_cargo_data != updated_cargo:
+                    #print("Cargo change detected")
+                    for item_name, item_count in current_cargo_data.items():
+                        if docked_at_construction:
+                            if item_name not in updated_cargo:
+                                print_construction_progress()
+                                print(f"New cargo detected: {item_name} - {item_count} tonnes")
+                            elif item_count > updated_cargo.get(item_name, 0):
+                                print_construction_progress()
+                                print(f"Bought/transferred {item_name}: {item_count - updated_cargo[item_name]} tonnes")
+                            elif item_count < updated_cargo.get(item_name, 0):
+                                print_construction_progress()
+                                delivered_amount = updated_cargo[item_name] - item_count
+                                print(f"Delivered: {delivered_amount} tonnes of {item_name}")
+                                # Update Construction_progress.json
+                                try:
+                                    if os.path.isfile("Construction_progress.json"):
+                                        with open("Construction_progress.json", "r") as progress_file:
+                                            progress_data = json.load(progress_file)
+                                    else:
+                                        progress_data = {}
+                                    # Update delivered amount
+                                    if item_name in progress_data:
+                                        progress_data[item_name] -= delivered_amount
+                                    else:
+                                        progress_data[item_name] = delivered_amount
+                                    # Write updated progress to file
+                                    with open("Construction_progress.json", "w") as update_file:
+                                        json.dump(progress_data, update_file, indent=4)
+                                except (json.JSONDecodeError, FileNotFoundError) as e:
+                                    print(f"Error updating Construction_progress.json: {e}")
+                        #print stuff for getting stuff from your carrier or buying it
+                        elif ship_docked and not docked_at_construction:
+                            print("Docked at regular sation/fleet carrier")
+                            if item_name not in updated_cargo:
+                                print_construction_progress()
+                                print(f"New cargo detected: {item_name} - {item_count} tonnes")
+                            elif item_count > updated_cargo.get(item_name, 0):
+                                print_construction_progress()
+                                print(f"Bought/transferred {item_name}: {item_count - updated_cargo[item_name]} tonnes")
+                            elif item_count < updated_cargo.get(item_name, item_count):
+                                print_construction_progress()
+                                print(f"Stored: {updated_cargo[item_name] - item_count} tonnes of {item_name}")
+                    if ship_docked and not docked_at_construction:
+                        for item_name in list(updated_cargo.keys()):
+                            if item_name not in current_cargo_data:
+                                removed_amount = updated_cargo[item_name]
+                                print_construction_progress()
+                                print(f"Stored: {removed_amount} tonnes of {item_name} (Fully removed)")
+                    if docked_at_construction:
+                        for item_name in list(updated_cargo.keys()):
+                            if item_name not in current_cargo_data:
+                                removed_amount = updated_cargo[item_name]
+                                try:
+                                    if os.path.isfile("Construction_progress.json"):
+                                        with open("Construction_progress.json", "r") as progress_file:
+                                            progress_data = json.load(progress_file)
+                                    else:
+                                        progress_data = {}
+                                    # Update delivered amount
+                                    if item_name in progress_data:
+                                        progress_data[item_name] -= removed_amount
+                                    else:
+                                        progress_data[item_name] = removed_amount
+                                    # Write updated progress to file
+                                    with open("Construction_progress.json", "w") as update_file:
+                                        json.dump(progress_data, update_file, indent=4)
+                                except (json.JSONDecodeError, FileNotFoundError) as e:
+                                    print(f"Error updating Construction_progress.json: {e}")
+                                print_construction_progress()
+                                print(f"Delivered: {removed_amount} tonnes of {item_name}")
+                        
+                    updated_cargo = current_cargo_data  # Update cargo state
+        except (json.JSONDecodeError, FileNotFoundError) as e:
+            print(f"Error reading cargo file: {e}")
+    time.sleep(0.1)
+
+#def check_if_removed():
+#    global updated_cargo
+#    for item_name in list(updated_cargo.keys()):
+#        if item_name not in current_cargo_data:
+#            removed_amount = updated_cargo[item_name]
+#            print_construction_progress()
+#            print(f"Stored: {removed_amount} tonnes of {item_name} (Fully removed)")
 
 def print_construction_progress():
     global ship_cargo_space
