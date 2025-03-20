@@ -204,6 +204,7 @@ def edit_list():
                 key = key.strip()
                 value = value.strip()
                 key = key.replace(" ", "")
+                key = key.replace("-", "")
                 loaded_list[key.lower()] = int(value)
             elif option == "2":
                 key = prompt("Commodity name in all lower case and no spaces: \n")
