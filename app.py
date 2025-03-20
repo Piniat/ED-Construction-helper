@@ -144,6 +144,7 @@ def user_input():
     global app_mode
     global ship_docked
     global docked_at_construction
+    global ship_cargo_space
     while True:
         with patch_stdout():
             usr_input = prompt("> ", cursor=CursorShape.BLINKING_BLOCK)
@@ -185,6 +186,8 @@ def user_input():
                 edit_list()
             elif usr_input == "edit-construction-progress":
                     edit_colonisation_progress()
+            elif usr_input == "edit-ship-cargo":
+                ship_cargo_space = prompt("How much cargo space does your ship have? \n> ")
             else:
                 print('Error. Invalid command. Type "help" for a list of commands')
             
@@ -332,6 +335,7 @@ def tracking_mode():
             key = key.strip()
             value = value.strip()
             key = key.replace(" ", "")
+            key = key.replace("-", "")
             initial_list[key.lower()] = int(value)
         formatted_list = json.dumps(initial_list, indent=4)
         with open("progress.json", "w") as outfile:
