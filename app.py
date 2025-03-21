@@ -8,6 +8,7 @@ import threading
 from prompt_toolkit import prompt
 from prompt_toolkit.cursor_shapes import CursorShape
 from prompt_toolkit.patch_stdout import patch_stdout
+from prompt_toolkit.completion import WordCompleter
 from datetime import datetime
 from tzlocal import get_localzone
 import pytz
@@ -137,24 +138,23 @@ def get_latest_journal():
     if not latest_file:
         print("No journal files found.")
     newest_file = max(latest_file, key=os.path.getctime)
-    #time.sleep(1)
     return newest_file
 
 def user_input():
-    #time.sleep(1)
     global app_mode
     global ship_docked
     global docked_at_construction
     global ship_cargo_space
+    command_list = WordCompleter(["help", "app-mode-1", "app-mode-2", "app-mode-3", "override-docked", "override-docked-construction", "edit-shopping-list", "edit-construction-progress", "edit-ship-cargo", "exit"], ignore_case=True)
     while True:
         with patch_stdout():
-            usr_input = prompt("> ", cursor=CursorShape.BLINKING_BLOCK)
+            usr_input = prompt("> ", cursor=CursorShape.BLINKING_BLOCK, completer=command_list, complete_while_typing=True, complete_in_thread=True)
             if usr_input == "exit":
                 print("Exiting program...")
                 time.sleep(1)
                 close_app()
             elif usr_input == "help":
-                print("List of commands: \n exit - exits the program \n app-mode-1 - switches app to journal monitoring mode \n app-mode-2 - switches to app to shopping list mode \n app-mode-3 - switches to construction progress tracking \n edit-shopping-list - allows you to edit shopping list in-app \n override-docked - overrides docked status in mode 3 \n override-docked-construction - overrides if you are docked at a constructions site / megaship (any cargo removed from your hold will be counted towards progress to buiding)")
+                print("List of commands: \n exit - exits the program \n app-mode-1 - switches to construction progress tracking \n app-mode-2 - switches to app to shopping list mode \n app-mode-3 - switches app to journal monitoring mode \n edit-shopping-list - allows you to edit shopping list in-app \n override-docked - overrides docked status in mode 3 \n override-docked-construction - overrides if you are docked at a constructions site / megaship (any cargo removed from your hold will be counted towards progress to buiding) \n edit-ship-cargo")
             elif usr_input == "app-mode-1":
                 app_mode = "1"
             elif usr_input == "app-mode-2":
@@ -189,10 +189,13 @@ def user_input():
                     edit_colonisation_progress()
             elif usr_input == "edit-ship-cargo":
                 ship_cargo_space = prompt("How much cargo space does your ship have? \n> ")
+                print("Updated ship cargo space")
             else:
                 print('Error. Invalid command. Type "help" for a list of commands')
             
 def edit_list():
+    global all_comodities
+    complete = WordCompleter(all_comodities, ignore_case=True)
     if not os.path.isfile('progress.json'):
         print("Error no list detected, please make one first")
     else:
@@ -200,7 +203,7 @@ def edit_list():
             loaded_list = json.load(readfile)
             option = prompt("1- Edit/Add \n2-Remove \n")
             if option == "1":
-                key = prompt("Commodity name in all lower case and no spaces: \n")
+                key = prompt("Commodity name in all lower case and no spaces: \n", completer=complete, complete_while_typing=True, complete_in_thread=True)
                 value = prompt("New amount needed: \n")
                 key = key.strip()
                 value = value.strip()
@@ -208,7 +211,7 @@ def edit_list():
                 key = re.sub(r'[^a-zA-Z0-9]', '', key)
                 loaded_list[key.lower()] = int(value)
             elif option == "2":
-                key = prompt("Commodity name in all lower case and no spaces: \n")
+                key = prompt("Commodity name in all lower case and no spaces: \n", completer=complete, complete_while_typing=True, complete_in_thread=True)
                 key = key.strip()
                 key = key.replace(" ", "")
                 if key in loaded_list:
@@ -224,6 +227,8 @@ def edit_list():
         print_list()
 
 def edit_colonisation_progress():
+    global all_comodities
+    complete = WordCompleter(all_comodities, ignore_case=True)
     if not os.path.isfile('Construction_progress.json'):
         print("Error no list detected, please make one first")
     else:
@@ -231,7 +236,7 @@ def edit_colonisation_progress():
             loaded_list = json.load(readfile)
             option = prompt("1- Edit/Add \n2-Remove \n")
             if option == "1":
-                key = prompt("Commodity name in all lower case and no spaces: \n")
+                key = prompt("Commodity name in all lower case and no spaces: \n", completer=complete, complete_while_typing=True, complete_in_thread=True)
                 value = prompt("New amount to deliver: \n")
                 key = key.strip()
                 value = value.strip()
@@ -239,7 +244,7 @@ def edit_colonisation_progress():
                 key = re.sub(r'[^a-zA-Z0-9]', '', key)
                 loaded_list[key.lower()] = int(value)
             elif option == "2":
-                key = prompt("Commodity name in all lower case and no spaces: \n")
+                key = prompt("Commodity name in all lower case and no spaces: \n", completer=complete, complete_while_typing=True, complete_in_thread=True)
                 key = key.strip()
                 key = key.replace(" ", "")
                 key = re.sub(r'[^a-zA-Z0-9]', '', key)
@@ -253,8 +258,6 @@ def edit_colonisation_progress():
         with open('progress.json', 'w') as writefile:
             json.dump(loaded_list, writefile, indent=4)
         print("done!")
-
-            
 
 def start_user_input():
     t1 = threading.Thread(target=user_input, daemon=True)
@@ -328,13 +331,15 @@ def tracking_mode():
     global initialized
     global input_started
     global ship_cargo_space
+    global all_comodities
+    complete = WordCompleter(all_comodities, ignore_case=True)
     if not os.path.isfile('progress.json') and initialized == 0:
         #initial_list = {"aluminium":7143, "buildingfabricators":394, "ceramiccomposites":816, "cmmcomposite":6800, "computercomponents":98, "copper":390, "emergencypowercells":71, "evacuationshelter":203, "foodcartridges":139, "fruitandvegetables":97, "liquidoxygen":2455, "medicaldiagnosticequipment":46, "nonleathalweapons":33, "polymers":672, "powergenerators":70, "semiconductors":101, "steel":10659, "structuralregulators":665, "superconductors":134, "surfacestabilisers":603, "survivalequipment":57, "landenrichmentsystems":69, "titanium":5498}
         initial_list = {}
         item_amount = int(prompt("How many items do you plan on buying? \n"))
         i = 0
         for i in range(item_amount):
-            key = prompt("Commodity name in all lower case and no spaces: \n")
+            key = prompt("Commodity name in all lower case and no spaces: \n", completer=complete, complete_while_typing=True, complete_in_thread=True)
             value = prompt("Amount needed: \n")
             key = key.strip()
             value = value.strip()
@@ -433,6 +438,8 @@ def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def create_progress_tracking():
+    global all_comodities
+    complete = WordCompleter(all_comodities)
     print("Need to create file")
     progress_list = {}
     copy_progress = prompt("Copy from shopping list? (Progress.json) y/n \n> ", cursor=CursorShape.BLINKING_BLOCK)
@@ -441,7 +448,7 @@ def create_progress_tracking():
     elif copy_progress == "n":
         item_amount = int(prompt("How many different commodities do you need for construction? \n> ", cursor=CursorShape.BLINKING_BLOCK))
         for i in range(item_amount):
-            key = prompt("Commodity name in all lower case and no spaces: \n")
+            key = prompt("Commodity name in all lower case and no spaces: \n", completer=complete, complete_while_typing=True, complete_in_thread=True)
             value = prompt("Amount needed: \n")
             key = key.strip()
             value = value.strip()
@@ -602,7 +609,7 @@ def print_construction_progress():
                 print(f"Error reading cargo file: {e}")
 
 clear_screen()
-print('ED Colonisation helper v0.4.2-alpha \n Type "help" for a list of commands')
+print('ED Colonisation helper v0.4.3-alpha \n Type "help" for a list of commands')
 if not os.path.isfile('config.ini'):
     path = input("Input game journal file path without quotes:  \n")
     config = configparser.ConfigParser() #initiates config parser
@@ -636,6 +643,253 @@ else:
     global docked_at_construction
     global file_detected
     global updated_cargo
+    global all_comodities
+    all_comodities = [
+        "Agronomic Treatment",
+        "Explosives",
+        "Hydrogen Fuel",
+        "Hydrogen Peroxide",
+        "Liquid Oxygen",
+        "Mineral Oil",
+        "Nerve Agents",
+        "Pesticides",
+        "Rockforth Fertiliser",
+        "Surface Stabilisers",
+        "Synthetic Reagents",
+        "Tritium",
+        "Water",
+        "Clothing",
+        "Consumer Technology",
+        "Domestic Appliances",
+        "Evacuation Shelter",
+        "Survival Equipment",
+        "Algae",
+        "Animal Meat",
+        "Coffee",
+        "Fish",
+        "Food Cartridges",
+        "Fruit and Vegetables",
+        "Grain",
+        "Synthetic Meat",
+        "Tea",
+        "Ceramic Composites",
+        "CMM Composite",
+        "Insulating Membrane",
+        "Meta-Alloys",
+        "Micro-Weave Cooling Hoses",
+        "Neofabric Insulation",
+        "Polymers",
+        "Semiconductors",
+        "Superconductors",
+        "Beer",
+        "Bootleg Liquor",
+        "Liquor",
+        "Narcotics",
+        "Onionhead Gamma Strain",
+        "Tobacco",
+        "Wine",
+        "Articulation Motors",
+        "Atmospheric Processors",
+        "Building Fabricators",
+        "Crop Harvesters",
+        "Emergency Power Cells",
+        "Energy Grid Assembly",
+        "Exhaust Manifold",
+        "Geological Equipment",
+        "Heatsink Interlink",
+        "HN Shock Mount",
+        "Magnetic Emitter Coil",
+        "Marine Equipment",
+        "Microbial Furnaces",
+        "Mineral Extractors",
+        "Modular Terminals",
+        "Power Converter",
+        "Power Generators",
+        "Power Transfer Bus",
+        "Radiation Baffle",
+        "Reinforced Mounting Plate",
+        "Skimmer Components",
+        "Thermal Cooling Units",
+        "Water Purifiers",
+        "Advanced Medicines",
+        "Agri-Medicines",
+        "Basic Medicines",
+        "Combat Stabilisers",
+        "Performance Enhancers",
+        "Progenitor Cells",
+        "Aluminium",
+        "Beryllium",
+        "Bismuth",
+        "Cobalt",
+        "Copper",
+        "Gallium",
+        "Gold",
+        "Hafnium 178",
+        "Indium",
+        "Lanthanum",
+        "Lithium",
+        "Osmium",
+        "Palladium",
+        "Platinum",
+        "Platinum Alloy",
+        "Praseodymium",
+        "Samarium",
+        "Silver",
+        "Tantalum",
+        "Thallium",
+        "Thorium",
+        "Titanium",
+        "Uranium",
+        "Alexandrite",
+        "Bauxite",
+        "Benitoite",
+        "Bertrandite",
+        "Bromellite",
+        "Coltan",
+        "Cryolite",
+        "Gallite",
+        "Goslarite",
+        "Grandidierite",
+        "Indite",
+        "Jadeite",
+        "Lepidolite",
+        "Lithium Hydroxide",
+        "Low Temperature Diamonds",
+        "Methane Clathrate",
+        "Methanol Monohydrate Crystals",
+        "Moissanite",
+        "Monazite",
+        "Musgravite",
+        "Painite",
+        "Pyrophyllite",
+        "Rhodplumsite",
+        "Rutile",
+        "Serendibite",
+        "Taaffeite",
+        "Uraninite",
+        "Void Opals",
+        "AI Relics",
+        "Ancient Artefact",
+        "Ancient Key",
+        "Anomaly Particles",
+        "Antimatter Containment Unit",
+        "Antique Jewellery",
+        "Antiquities",
+        "Assault Plans",
+        "Black Box",
+        "Commercial Samples",
+        "Damaged Escape Pod",
+        "Data Core",
+        "Diplomatic Bag",
+        "Earth Relics",
+        "Encrypted Correspondence",
+        "Encrypted Data Storage",
+        "Experimental Chemicals",
+        "Fossil Remnants",
+        "Gene Bank",
+        "Geological Samples",
+        "Guardian Casket",
+        "Guardian Orb",
+        "Guardian Relic",
+        "Guardian Tablet",
+        "Guardian Totem",
+        "Guardian Urn",
+        "Hostage",
+        "Large Survey Data Cache",
+        "Military Intelligence",
+        "Military Plans",
+        "Mollusc Brain Tissue",
+        "Mollusc Fluid",
+        "Mollusc Membrane",
+        "Mollusc Mycelium",
+        "Mollusc Soft Tissue",
+        "Mollusc Spores",
+        "Mysterious Idol",
+        "Occupied Escape Pod",
+        "Personal Effects",
+        "Pod Core Tissue",
+        "Pod Dead Tissue",
+        "Pod Mesoglea",
+        "Pod Outer Tissue",
+        "Pod Shell Tissue",
+        "Pod Surface Tissue",
+        "Pod Tissue",
+        "Political Prisoner",
+        "Precious Gems",
+        "Prohibited Research Materials",
+        "Prototype Tech",
+        "Rare Artwork",
+        "Rebel Transmissions",
+        "SAP 8 Core Container",
+        "Scientific Research",
+        "Scientific Samples",
+        "Small Survey Data Cache",
+        "Space Pioneer Relics",
+        "Tactical Data",
+        "Technical Blueprints",
+        "Thargoid Basilisk Tissue Sample",
+        "Thargoid Biological Matter",
+        "Thargoid Bio-Storage Capsule",
+        "Thargoid Cyclops Tissue Sample",
+        "Thargoid Glaive Tissue Sample",
+        "Thargoid Heart",
+        "Thargoid Hydra Tissue Sample",
+        "Thargoid Link",
+        "Thargoid Orthrus Tissue Sample",
+        "Thargoid Probe",
+        "Thargoid Resin",
+        "Thargoid Sensor",
+        "Thargoid Medusa Tissue Sample",
+        "Thargoid Scout Tissue Sample",
+        "Thargoid Technology Samples",
+        "Time Capsule",
+        "Titan Deep Tissue Sample",
+        "Titan Maw Deep Tissue Sample",
+        "Titan Maw Partial Tissue Sample",
+        "Titan Maw Tissue Sample",
+        "Titan Partial Tissue Sample",
+        "Titan Tissue Sample",
+        "Trade Data",
+        "Trinkets of Hidden Fortune",
+        "Unclassified Relic",
+        "Unoccupied Escape Pod",
+        "Unstable Data Core",
+        "Wreckage Components",
+        "Imperial Slaves",
+        "Slaves",
+        "Advanced Catalysers",
+        "Animal Monitors",
+        "Aquaponic Systems",
+        "Auto Fabricators",
+        "Bioreducing Lichen",
+        "Computer Components",
+        "H.E. Suits",
+        "Hardware Diagnostic Sensor",
+        "Ion Distributor",
+        "Land Enrichment Systems",
+        "Medical Diagnostic Equipment",
+        "Micro Controllers",
+        "Muon Imager",
+        "Nanobreakers",
+        "Resonating Separators",
+        "Robotics",
+        "Structural Regulators",
+        "Telemetry Suite",
+        "Conductive Fabrics",
+        "Leather",
+        "Military Grade Fabrics",
+        "Natural Fabrics",
+        "Synthetic Fabrics",
+        "Biowaste",
+        "Chemical Waste",
+        "Scrap",
+        "Toxic Waste",
+        "Battle Weapons",
+        "Landmines",
+        "Non Lethal Weapons",
+        "Personal Weapons",
+        "Reactive Armour"
+    ]
     cargo_file = os.path.join(journal_folder, "Cargo.json")
     try:
         with open(cargo_file, "r") as cargo:
@@ -652,7 +906,6 @@ else:
     input_started = 0
     initialized = 0
     just_started = 1
-    #time.sleep(0.5)
     try:
         with open(journal_file_path) as f:
             f.seek(0, os.SEEK_END)
@@ -661,7 +914,7 @@ else:
                 if not lines and just_started == 0:
                     time.sleep(0.1)
                     continue
-                if app_mode == "1":
+                if app_mode == "3":
                     just_started = 0
                     if input_started == 0:
                         start_user_input()
@@ -670,9 +923,8 @@ else:
                 elif app_mode == "2":
                     just_started = 0
                     tracking_mode()
-                elif app_mode == "3":
+                elif app_mode == "1":
                     just_started = 0
-                    #delivery_tracker()
                     colonisation_tracker()
     except json.JSONDecodeError:
         print(f"Json decode error")
