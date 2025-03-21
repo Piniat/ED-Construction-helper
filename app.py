@@ -15,6 +15,7 @@ import pytz
 import shutil
 import math
 import re
+import sys
 
 #functions  
 
@@ -145,7 +146,7 @@ def user_input():
     global ship_docked
     global docked_at_construction
     global ship_cargo_space
-    command_list = WordCompleter(["help", "app-mode-1", "app-mode-2", "app-mode-3", "override-docked", "override-docked-construction", "edit-shopping-list", "edit-construction-progress", "edit-ship-cargo", "exit"], ignore_case=True)
+    command_list = WordCompleter(["help", "app-mode-1", "app-mode-2", "app-mode-3", "override-docked", "override-docked-construction", "edit-shopping-list", "edit-construction-progress", "edit-ship-cargo", "exit", "reset-progress"], ignore_case=True)
     while True:
         with patch_stdout():
             usr_input = prompt("> ", cursor=CursorShape.BLINKING_BLOCK, completer=command_list, complete_while_typing=True, complete_in_thread=True)
@@ -190,6 +191,29 @@ def user_input():
             elif usr_input == "edit-ship-cargo":
                 ship_cargo_space = prompt("How much cargo space does your ship have? \n> ")
                 print("Updated ship cargo space")
+            elif usr_input == "reset-progress":
+                autocomplete = WordCompleter(["Shopping", "Delivery"], ignore_case=True)
+                which = prompt("Do you want to delete the commodity shopping list or colonisation deliver list? Shopping/Delivery\n> ", completer=autocomplete, complete_while_typing=True, complete_in_thread=True)
+                if which == "Shopping":
+                    try:
+                        os.remove("progress.json")
+                        print("File removed!")
+                        print("Restarting...")
+                        time.sleep(0.5)
+                        python = sys.executable
+                        os.execv(python, [python] + sys.argv)
+                    except:
+                        print("Error. File not found")
+                elif which == "Delivery":
+                    try:
+                        os.remove("Construction_progress.json")
+                        print("File removed!")
+                        print("Restarting...")
+                        time.sleep(0.5)
+                        python = sys.executable
+                        os.execv(python, [python] + sys.argv)
+                    except:
+                        print("Error. File not found")
             else:
                 print('Error. Invalid command. Type "help" for a list of commands')
             
