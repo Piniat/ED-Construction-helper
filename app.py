@@ -633,7 +633,7 @@ def print_construction_progress():
                 print(f"Error reading cargo file: {e}")
 
 clear_screen()
-print('ED Colonisation helper v0.4.3-alpha \n Type "help" for a list of commands')
+print('ED Colonisation helper v0.4.5-alpha \n Type "help" for a list of commands')
 if not os.path.isfile('config.ini'):
     path = input("Input game journal file path without quotes:  \n")
     config = configparser.ConfigParser() #initiates config parser
@@ -668,6 +668,7 @@ else:
     global file_detected
     global updated_cargo
     global all_comodities
+    #nice list down there huh?
     all_comodities = [
         "Agronomic Treatment",
         "Explosives",
