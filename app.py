@@ -371,7 +371,7 @@ def tracking_mode():
             key = re.sub(r'[^a-zA-Z0-9]', '', key)
             initial_list[key.lower()] = int(value)
         formatted_list = json.dumps(initial_list, indent=4)
-        copy_over = prompt("Wpuld you like to copy the list to Construction_progress.json for delivery tracking later? y/n")
+        copy_over = prompt("Wpuld you like to copy the list to Construction_progress.json for delivery tracking later? y/n\n> ")
         with open("progress.json", "w") as outfile:
             outfile.write(formatted_list)
         print("created progress file")
