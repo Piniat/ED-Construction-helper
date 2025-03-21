@@ -8,6 +8,8 @@ import threading
 from prompt_toolkit import prompt
 from prompt_toolkit.cursor_shapes import CursorShape
 from prompt_toolkit.patch_stdout import patch_stdout
+from prompt_toolkit import print_formatted_text
+from prompt_toolkit.formatted_text import FormattedText
 from datetime import datetime
 from tzlocal import get_localzone
 import pytz
@@ -348,11 +350,11 @@ def tracking_mode():
         with open('progress.json', 'r') as openfile:
             initial_list = json.load(openfile)
             formatted_list = json.dumps(initial_list, indent=4)
-            initialized = 1
             clear_screen()
             ship_cargo_space = int(prompt("Type the cargo capacity of your ship:\n> ", cursor=CursorShape.BLINKING_BLOCK))
             clear_screen()
             print_list()
+            initialized = 1
     if input_started == 0:
         start_user_input()
         input_started = 1
@@ -384,12 +386,11 @@ def tracking_mode():
                                 print("\n" + "-" * 60)
                                 print(f"{'Timestamp':<20}: {formatted_timestamp}")
                                 print("\n" + "-" * 60)
-                                #print("Materials:")
-                                #for material, amount in initial_list.items():
-                                #    print(f"    {material.capitalize()}: {amount}")
-                                ##print(formatted_list)
-                                #print("\n" + "-" * 60)
                                 print_list()
+                                item_trips_left = new_amount/ship_cargo_space
+                                item_trips_left = math.ceil(item_trips_left)
+                                print(f"{item_trips_left} trips for {curr_material} left")
+                                print("\n" + "-" * 60)
                                 print(curr_material.capitalize() + " remaining: " + str(new_amount))
                             elif event.get('event') == "Shutdown":
                                 game_shutdown()
@@ -397,6 +398,7 @@ def tracking_mode():
                     print(f"Skipping invalid line: {line}")
                     continue
 def print_list():
+    global initialized
     global ship_cargo_space
     total = 0
     with open('progress.json', 'r') as openfile:
@@ -409,7 +411,12 @@ def print_list():
     print("Materials:")
     for material, amount in initial_list.items():
         total += amount
-        print(f"    {material.capitalize()}: {amount}")
+        if amount > 0:
+            print(f"    {material.capitalize()}: {amount}")
+        elif amount == 0:
+            print(f"    ✔  {material.capitalize()}: {amount}")
+        elif amount < 0:
+            print(f"    ✔!  {material.capitalize()}: {amount} - overstock!")
     print("\n" + "-" * 60)
     trips_left = total/ship_cargo_space
     trips_left = math.ceil(trips_left)
@@ -570,14 +577,6 @@ def colonisation_tracker():
             print(f"Error reading cargo file: {e}")
     time.sleep(0.1)
 
-#def check_if_removed():
-#    global updated_cargo
-#    for item_name in list(updated_cargo.keys()):
-#        if item_name not in current_cargo_data:
-#            removed_amount = updated_cargo[item_name]
-#            print_construction_progress()
-#            print(f"Stored: {removed_amount} tonnes of {item_name} (Fully removed)")
-
 def print_construction_progress():
     global ship_cargo_space
     global total
@@ -585,14 +584,14 @@ def print_construction_progress():
     clear_screen()
     timestamp = generate_one_time_timestamp()
     print("\n" + "-" * 60)
-    print(timestamp)
+    print(f"Timestamp: {timestamp}")
     print("\n" + "-" * 60)
     try:
         with open('Construction_progress.json', "r") as progress:
             progress_data = json.load(progress)
             for item, count in progress_data.items():
                 total += int(count)
-                print(f"{item}: {count}")
+                print(f"    {item}: {count}")
         print("\n" + "-" * 60)
         trips_left = total/ship_cargo_space
         trips_left = math.ceil(trips_left)
