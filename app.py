@@ -292,7 +292,7 @@ def close_app():
 
 def app_mode_selection():
     global app_mode
-    app_mode = prompt("Select app mode: \n 1-Journal monitor \n 2-Shopping list (W.I.P) \n 3-Colonisation construction tracker (W.I.P) \n exit-exits the app \n : ", cursor=CursorShape.BLINKING_BLOCK)
+    app_mode = prompt("Select app mode: \n 1-Colonisation construction tracker \n 2-Shopping list \n 3-Journal monitor \n exit-exits the app \n : ", cursor=CursorShape.BLINKING_BLOCK)
     if app_mode == "exit":
         close_app()
 
