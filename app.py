@@ -371,11 +371,19 @@ def tracking_mode():
             key = re.sub(r'[^a-zA-Z0-9]', '', key)
             initial_list[key.lower()] = int(value)
         formatted_list = json.dumps(initial_list, indent=4)
+        copy_over = prompt("Wpuld you like to copy the list to Construction_progress.json for delivery tracking later? y/n")
         with open("progress.json", "w") as outfile:
             outfile.write(formatted_list)
         print("created progress file")
-        print_list()
-        initialized = 1
+        if copy_over == "y":
+            with open("Construction_progress.json", "w") as other_outfile:
+                other_outfile.write(formatted_list)
+            print("Created delivery progress")
+        elif copy_over == "n":
+            print_list()
+            initialized = 1
+        else:
+            print("Error. Incorrect option. Defaulting to no")
     elif initialized == 0:
         with open('progress.json', 'r') as openfile:
             initial_list = json.load(openfile)
