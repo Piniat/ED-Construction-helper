@@ -8,8 +8,6 @@ import threading
 from prompt_toolkit import prompt
 from prompt_toolkit.cursor_shapes import CursorShape
 from prompt_toolkit.patch_stdout import patch_stdout
-from prompt_toolkit import print_formatted_text
-from prompt_toolkit.formatted_text import FormattedText
 from datetime import datetime
 from tzlocal import get_localzone
 import pytz
