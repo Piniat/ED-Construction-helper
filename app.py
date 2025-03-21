@@ -13,6 +13,7 @@ from tzlocal import get_localzone
 import pytz
 import shutil
 import math
+import re
 
 #functions  
 
@@ -204,7 +205,7 @@ def edit_list():
                 key = key.strip()
                 value = value.strip()
                 key = key.replace(" ", "")
-                key = key.replace("-", "")
+                key = re.sub(r'[^a-zA-Z0-9]', '', key)
                 loaded_list[key.lower()] = int(value)
             elif option == "2":
                 key = prompt("Commodity name in all lower case and no spaces: \n")
@@ -235,11 +236,13 @@ def edit_colonisation_progress():
                 key = key.strip()
                 value = value.strip()
                 key = key.replace(" ", "")
+                key = re.sub(r'[^a-zA-Z0-9]', '', key)
                 loaded_list[key.lower()] = int(value)
             elif option == "2":
                 key = prompt("Commodity name in all lower case and no spaces: \n")
                 key = key.strip()
                 key = key.replace(" ", "")
+                key = re.sub(r'[^a-zA-Z0-9]', '', key)
                 if key in loaded_list:
                     del loaded_list[key]
                     print(f"{key} removed from list")
@@ -336,7 +339,7 @@ def tracking_mode():
             key = key.strip()
             value = value.strip()
             key = key.replace(" ", "")
-            key = key.replace("-", "")
+            key = re.sub(r'[^a-zA-Z0-9]', '', key)
             initial_list[key.lower()] = int(value)
         formatted_list = json.dumps(initial_list, indent=4)
         with open("progress.json", "w") as outfile:
@@ -599,7 +602,7 @@ def print_construction_progress():
                 print(f"Error reading cargo file: {e}")
 
 clear_screen()
-print('ED Colonisation helper v0.4.1-alpha \n Type "help" for a list of commands')
+print('ED Colonisation helper v0.4.2-alpha \n Type "help" for a list of commands')
 if not os.path.isfile('config.ini'):
     path = input("Input game journal file path without quotes:  \n")
     config = configparser.ConfigParser() #initiates config parser
