@@ -639,7 +639,7 @@ def print_construction_progress():
                 print(f"Error reading cargo file: {e}")
 
 clear_screen()
-print('ED Colonisation helper v0.4.7-alpha \n Type "help" for a list of commands')
+print('ED Colonisation helper v0.4.9-alpha \n Type "help" for a list of commands')
 if not os.path.isfile('config.ini'):
     path = input("Input game journal file path without quotes:  \n")
     config = configparser.ConfigParser() #initiates config parser
