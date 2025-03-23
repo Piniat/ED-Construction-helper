@@ -478,7 +478,7 @@ def clear_screen():
 
 def create_progress_tracking():
     global all_comodities
-    complete = WordCompleter(all_comodities)
+    complete = WordCompleter(all_comodities, ignore_case=True)
     print("Need to create file")
     progress_list = {}
     copy_progress = prompt("Copy from shopping list? (Progress.json) y/n \n> ", cursor=CursorShape.BLINKING_BLOCK)
@@ -487,7 +487,7 @@ def create_progress_tracking():
     elif copy_progress == "n":
         item_amount = int(prompt("How many different commodities do you need for construction? \n> ", cursor=CursorShape.BLINKING_BLOCK))
         for i in range(item_amount):
-            key = prompt("Commodity name in all lower case and no spaces: \n", completer=complete, complete_while_typing=True, complete_in_thread=True)
+            key = prompt("Commodity name in all lower case and no spaces: \n> ", completer=complete, complete_while_typing=True, complete_in_thread=True)
             value = prompt("Amount needed: \n")
             key = key.strip()
             value = value.strip()
@@ -515,6 +515,7 @@ def colonisation_tracker():
     if not os.path.isfile("Construction_progress.json"):
         with open("Construction_progress.json", "w") as progress_file:
             create_progress_tracking()
+            print_construction_progress()
     # Start user input if not started
     if input_started == 0:
         start_user_input()
