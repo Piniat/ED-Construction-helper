@@ -189,7 +189,7 @@ def user_input():
             elif usr_input == "edit-construction-progress":
                     edit_colonisation_progress()
             elif usr_input == "edit-ship-cargo":
-                ship_cargo_space = prompt("How much cargo space does your ship have? \n> ")
+                ship_cargo_space = int(prompt("How much cargo space does your ship have? \n> "))
                 print("Updated ship cargo space")
             elif usr_input == "reset-progress":
                 autocomplete = WordCompleter(["Shopping", "Delivery"], ignore_case=True)
@@ -371,7 +371,7 @@ def tracking_mode():
             key = re.sub(r'[^a-zA-Z0-9]', '', key)
             initial_list[key.lower()] = int(value)
         formatted_list = json.dumps(initial_list, indent=4)
-        copy_over = prompt("Wpuld you like to copy the list to Construction_progress.json for delivery tracking later? y/n\n> ")
+        copy_over = prompt("Would you like to copy the list to Construction_progress.json for delivery tracking later? y/n\n> ")
         with open("progress.json", "w") as outfile:
             outfile.write(formatted_list)
         print("created progress file")
@@ -435,9 +435,16 @@ def tracking_mode():
                 except json.JSONDecodeError:
                     print(f"Skipping invalid line: {line}")
                     continue
+
+def request_ship_cargo():
+    global ship_cargo_space
+    ship_cargo_space = int(prompt("How much cargo space does your ship have? \n> "))
+
 def print_list():
     global initialized
     global ship_cargo_space
+    if ship_cargo_space == 0:
+        request_ship_cargo()
     total = 0
     with open('progress.json', 'r') as openfile:
         initial_list = json.load(openfile)
@@ -676,6 +683,8 @@ else:
     global file_detected
     global updated_cargo
     global all_comodities
+    global ship_cargo_space
+    ship_cargo_space = 0
     #nice list down there huh?
     all_comodities = [
         "Agronomic Treatment",
