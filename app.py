@@ -378,7 +378,7 @@ def tracking_mode():
         if copy_over == "y":
             with open("Construction_progress.json", "w") as other_outfile:
                 other_outfile.write(formatted_list)
-            print("Created delivery progress")
+            print_list()
         elif copy_over == "n":
             print_list()
             initialized = 1
