@@ -4,7 +4,6 @@ This app was made to track deliveries to colonisation constructions (colonisatio
 The app can currently:<br>
 <ul>
   <li>Track deliveries to constructions</li>
-Note: The feature above hasn't been properly tested yet as I am personally still collecting materials for my own construction
   <li>Track the collection of items via marketbuy events</li>
   <li>Tell you the amount of trips remaining based on your ships cargo capacity</li>
   <li>Tell you the amount of trips remaining for the last bought item based on your ships cargo capacity</li>
