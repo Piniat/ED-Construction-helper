@@ -225,8 +225,8 @@ def user_input():
                         os.execv(python, [python] + sys.argv)
                     except:
                         print("Error. File not found")
-            elif usr_input == "debug":
-                print_construction_progress()
+            #elif usr_input == "debug":
+            #    print_construction_progress()
             else:
                 print('Error. Invalid command. Type "help" for a list of commands')
             
@@ -295,6 +295,7 @@ def edit_colonisation_progress():
         with open('Construction_progress.json', 'w') as writefile:
             json.dump(loaded_list, writefile, indent=4)
         print("done!")
+        print_construction_progress()
 
 def start_user_input():
     t1 = threading.Thread(target=user_input, daemon=True)
@@ -684,7 +685,7 @@ def print_construction_progress():
                 print(f"Error reading cargo file: {e}")
 
 clear_screen()
-print('ED Colonisation helper v0.4.9-alpha \n Type "help" for a list of commands')
+print('ED Colonisation helper v0.4.10-alpha \n Type "help" for a list of commands')
 if not os.path.isfile('config.ini'):
     path = input("Input game journal file path without quotes:  \n")
     config = configparser.ConfigParser() #initiates config parser
