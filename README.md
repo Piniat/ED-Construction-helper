@@ -1,4 +1,4 @@
-# ED-Python-tool
+# ED Construction helper
 This app was made to track deliveries to colonisation constructions (colonisation megaships or construction sites) and track the gathering of materials using a shopping list. It's basically a self updating spreadsheet.<br>
 ### Important! Run the app after starting elite dangerous or it'll read outdated journal files.<br>
 The app can currently:<br>
