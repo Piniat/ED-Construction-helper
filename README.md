@@ -18,7 +18,7 @@ The app has a simple TUI (Text-based user interface) featuring autocomplete to h
 ## Installation
 You can install the provided windows/linux release or (for the most up to date but also possibly buggier versio) clone the repository and run app.py<br>
 ```
-git clone https://github.com/Piniat/ED-Python-tool.git
+git clone https://github.com/Piniat/ED-Construction-helper.git
 cd ED-Python-tool
 ```
 Install dependancies
