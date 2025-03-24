@@ -146,6 +146,8 @@ def user_input():
     global ship_docked
     global docked_at_construction
     global ship_cargo_space
+    global switched
+    global just_started
     command_list = WordCompleter(["help", "app-mode-1", "app-mode-2", "app-mode-3", "override-docked", "override-docked-construction", "edit-shopping-list", "edit-construction-progress", "edit-ship-cargo", "exit", "reset-progress"], ignore_case=True)
     while True:
         with patch_stdout():
@@ -157,11 +159,20 @@ def user_input():
             elif usr_input == "help":
                 print("List of commands: \n exit - exits the program \n app-mode-1 - switches to construction progress tracking \n app-mode-2 - switches to app to shopping list mode \n app-mode-3 - switches app to journal monitoring mode \n edit-shopping-list - allows you to edit shopping list in-app \n override-docked - overrides docked status in mode 3 \n override-docked-construction - overrides if you are docked at a constructions site / megaship (any cargo removed from your hold will be counted towards progress to buiding) \n edit-ship-cargo")
             elif usr_input == "app-mode-1":
+                switched = True
+                just_started = 0
                 app_mode = "1"
+                print("Switched to construction progress tracking.")
             elif usr_input == "app-mode-2":
+                switched = True
+                just_started = 0
                 app_mode = "2"
+                print("Switched to shopping list tracking")
             elif usr_input == "app-mode-3":
+                switched = True
+                just_started = 0
                 app_mode = "3"
+                print("Switched to journal logging mode")
             elif usr_input == "override-docked":
                 print("Current status: ", ship_docked)
                 state = prompt("Are you docked? y/n \n> ")
@@ -215,7 +226,7 @@ def user_input():
                     except:
                         print("Error. File not found")
             elif usr_input == "debug":
-                print(docked_at_construction)
+                print_construction_progress()
             else:
                 print('Error. Invalid command. Type "help" for a list of commands')
             
@@ -281,7 +292,7 @@ def edit_colonisation_progress():
                     print(f"{key} not found")
             else:
                 print("Invalid choice. Please enter 'add', 'edit', or 'remove'.")
-        with open('progress.json', 'w') as writefile:
+        with open('Construction_progress.json', 'w') as writefile:
             json.dump(loaded_list, writefile, indent=4)
         print("done!")
 
@@ -297,6 +308,9 @@ def app_mode_selection():
     app_mode = prompt("Select app mode: \n 1-Colonisation construction tracker \n 2-Shopping list \n 3-Journal monitor \n exit-exits the app \n : ", cursor=CursorShape.BLINKING_BLOCK)
     if app_mode == "exit":
         close_app()
+    elif app_mode not in ["1", "2", "3"]:
+        print("Invalid mode. Please select 1, 2, or 3.")
+        app_mode_selection()
 
 def convert_timestamp(ed_timestamp):
     utc_time = datetime.strptime(ed_timestamp, "%Y-%m-%dT%H:%M:%SZ")
@@ -306,6 +320,10 @@ def convert_timestamp(ed_timestamp):
     return local_time.strftime("%Y-%m-%d %H:%M:%S")
 
 def log_mode():
+    global input_started
+    if input_started == 0:
+        start_user_input()
+        input_started = 1
     for line in lines:
                 try:
                     curr_event = ndjson.loads(line.strip())
@@ -358,6 +376,7 @@ def tracking_mode():
     global input_started
     global ship_cargo_space
     global all_comodities
+    global switched
     complete = WordCompleter(all_comodities, ignore_case=True)
     if not os.path.isfile('progress.json') and initialized == 0:
         #initial_list = {"aluminium":7143, "buildingfabricators":394, "ceramiccomposites":816, "cmmcomposite":6800, "computercomponents":98, "copper":390, "emergencypowercells":71, "evacuationshelter":203, "foodcartridges":139, "fruitandvegetables":97, "liquidoxygen":2455, "medicaldiagnosticequipment":46, "nonleathalweapons":33, "polymers":672, "powergenerators":70, "semiconductors":101, "steel":10659, "structuralregulators":665, "superconductors":134, "surfacestabilisers":603, "survivalequipment":57, "landenrichmentsystems":69, "titanium":5498}
@@ -386,7 +405,7 @@ def tracking_mode():
             initialized = 1
         else:
             print("Error. Incorrect option. Defaulting to no")
-    elif initialized == 0:
+    elif initialized == 0 or switched is True:
         with open('progress.json', 'r') as openfile:
             initial_list = json.load(openfile)
             formatted_list = json.dumps(initial_list, indent=4)
@@ -395,6 +414,7 @@ def tracking_mode():
             clear_screen()
             print_list()
             initialized = 1
+            switched = False
     if input_started == 0:
         start_user_input()
         input_started = 1
@@ -511,7 +531,8 @@ def colonisation_tracker():
     global item_name_list
     global item_count_list
     global delivered_amount
-    if initialized == 0:
+    global switched
+    if initialized == 0 or switched == True:
         clear_screen()
         ship_cargo_space = int(prompt("Type the cargo capacity of your ship:\n> ", cursor=CursorShape.BLINKING_BLOCK))
         item_name_list = []
@@ -520,6 +541,7 @@ def colonisation_tracker():
         print_construction_progress()
         print("Helpful comands:\nhelp\noverride-docked\noverride-docked-construction")
         initialized = 1
+        switched = False
     if not os.path.isfile("Construction_progress.json"):
         with open("Construction_progress.json", "w") as progress_file:
             create_progress_tracking()
@@ -563,6 +585,24 @@ def colonisation_tracker():
                             item_name_list.append(item_name)
                             delivered_amount = updated_cargo[item_name]
                             item_count_list.append(delivered_amount)
+                            try:
+                                if os.path.isfile("Construction_progress.json"):
+                                    with open("Construction_progress.json", "r") as progress_file:
+                                        progress_data = json.load(progress_file)
+                                else:
+                                    progress_data = {}
+                                # Update delivered amount
+                                if item_name in progress_data:
+                                    progress_data[item_name] = progress_data[item_name] - delivered_amount
+                                else:
+                                    #progress_data[item_name] = delivered_amount
+                                    print("Item not found in progress list. Did you spell it correctly?")
+                                # Write updated progress to file
+                                with open("Construction_progress.json", "w") as update_file:
+                                    json.dump(progress_data, update_file, indent=4)
+                                print_construction_progress()
+                            except (json.JSONDecodeError, FileNotFoundError) as e:
+                                print(f"Error updating Construction_progress.json: {e}")
                     for item_name, item_count in current_cargo_data.items():
                         if docked_at_construction:
                             if item_count < updated_cargo.get(item_name, 0):
@@ -586,6 +626,7 @@ def colonisation_tracker():
                                 # Write updated progress to file
                                 with open("Construction_progress.json", "w") as update_file:
                                     json.dump(progress_data, update_file, indent=4)
+                                print_construction_progress()
                             except (json.JSONDecodeError, FileNotFoundError) as e:
                                 print(f"Error updating Construction_progress.json: {e}")
                         #print stuff for getting stuff from your carrier or buying it
@@ -598,7 +639,6 @@ def colonisation_tracker():
                             elif item_count < updated_cargo.get(item_name, item_count):
                                 print(f"Stored: {updated_cargo[item_name] - item_count} tonnes of {item_name}")     
                     updated_cargo = current_cargo_data  # Update cargo state
-                    print_construction_progress()
         except (json.JSONDecodeError, FileNotFoundError) as e:
             print(f"Error reading cargo file: {e}")
     time.sleep(0.1)
@@ -622,7 +662,12 @@ def print_construction_progress():
             progress_data = json.load(progress)
             for item, count in progress_data.items():
                 total += int(count)
-                print(f"    {item}: {count}")
+                if count > 0:
+                    print(f"    {item}: {count}")
+                elif count < 0:
+                    print(f"    ✔!  {item}: {count} - Overdelivered! Did someone else help deliver?")
+                elif count == 0:
+                    print(f"    ✔  {item}: {count}")
         print("\n" + "-" * 60)
         trips_left = total/ship_cargo_space
         trips_left = math.ceil(trips_left)
@@ -675,6 +720,7 @@ else:
     global updated_cargo
     global all_comodities
     global ship_cargo_space
+    global switched
     ship_cargo_space = 0
     #nice list down there huh?
     all_comodities = [
@@ -936,6 +982,7 @@ else:
     docked_at_construction = False
     opened_json = False
     ship_docked = False
+    switched = False
     input_started = 0
     initialized = 0
     just_started = 1
@@ -944,13 +991,12 @@ else:
             f.seek(0, os.SEEK_END)
             while True:
                 lines = f.readlines()
-                if not lines and just_started == 0:
+                if not lines and just_started == 0 and app_mode is not "1":
                     time.sleep(0.1)
                     continue
                 if app_mode == "3":
                     just_started = 0
                     if input_started == 0:
-                        start_user_input()
                         input_started = 1
                     log_mode()
                 elif app_mode == "2":
@@ -959,6 +1005,7 @@ else:
                 elif app_mode == "1":
                     just_started = 0
                     colonisation_tracker()
+                    time.sleep(0.3)
     except json.JSONDecodeError:
         print(f"Json decode error")
                 
