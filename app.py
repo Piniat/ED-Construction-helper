@@ -533,6 +533,7 @@ def colonisation_tracker():
     global item_count_list
     global delivered_amount
     global switched
+    ready_to_print = False
     if initialized == 0 or switched == True:
         clear_screen()
         ship_cargo_space = int(prompt("Type the cargo capacity of your ship:\n> ", cursor=CursorShape.BLINKING_BLOCK))
@@ -601,7 +602,8 @@ def colonisation_tracker():
                                 # Write updated progress to file
                                 with open("Construction_progress.json", "w") as update_file:
                                     json.dump(progress_data, update_file, indent=4)
-                                print_construction_progress()
+                                    ready_to_print = True
+                                #print_construction_progress()
                             except (json.JSONDecodeError, FileNotFoundError) as e:
                                 print(f"Error updating Construction_progress.json: {e}")
                     for item_name, item_count in current_cargo_data.items():
@@ -627,7 +629,7 @@ def colonisation_tracker():
                                 # Write updated progress to file
                                 with open("Construction_progress.json", "w") as update_file:
                                     json.dump(progress_data, update_file, indent=4)
-                                print_construction_progress()
+                                    ready_to_print = True
                             except (json.JSONDecodeError, FileNotFoundError) as e:
                                 print(f"Error updating Construction_progress.json: {e}")
                         #print stuff for getting stuff from your carrier or buying it
@@ -642,6 +644,9 @@ def colonisation_tracker():
                     updated_cargo = current_cargo_data  # Update cargo state
         except (json.JSONDecodeError, FileNotFoundError) as e:
             print(f"Error reading cargo file: {e}")
+        if ready_to_print == True:
+            print_construction_progress()
+            ready_to_print = False
     time.sleep(0.1)
 
 def print_construction_progress():
@@ -685,7 +690,7 @@ def print_construction_progress():
                 print(f"Error reading cargo file: {e}")
 
 clear_screen()
-print('ED Colonisation helper v0.4.10-alpha \n Type "help" for a list of commands')
+print('ED Construction helper v0.4.10-alpha \n Type "help" for a list of commands')
 if not os.path.isfile('config.ini'):
     path = input("Input game journal file path without quotes:  \n")
     config = configparser.ConfigParser() #initiates config parser
