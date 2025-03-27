@@ -388,12 +388,12 @@ def tracking_mode():
         for i in range(item_amount):
             key = prompt("Commodity name in all lower case and no spaces: \n", completer=complete, complete_while_typing=True, complete_in_thread=True)
             value = prompt("Amount needed: \n")
-            #key = key.strip()
+            key = key.strip()
             value = value.strip()
-            #key = key.replace(" ", "")
-            #key = re.sub(r'[^a-zA-Z0-9]', '', key)
-            #initial_list[key.lower()] = int(value)
-            initial_list[key] = int(value)
+            key = key.replace(" ", "")
+            key = re.sub(r'[^a-zA-Z0-9]', '', key)
+            initial_list[key.lower()] = int(value)
+            #initial_list[key] = int(value)
         formatted_list = json.dumps(initial_list, indent=4)
         copy_over = prompt("Would you like to copy the list to Construction_progress.json for delivery tracking later? y/n\n> ")
         with open("progress.json", "w") as outfile:
@@ -433,9 +433,9 @@ def tracking_mode():
                                 timestamp = event.get('timestamp')
                                 ed_timestamp=timestamp
                                 formatted_timestamp = convert_timestamp(ed_timestamp)
-                                curr_material = event.get('Type_Localised')
+                                curr_material = event.get('Type')
                                 subtract = event.get('Count')
-                                if event.get('Type_Localised') not in initial_list:
+                                if event.get('Type') not in initial_list:
                                     print("Error, item not on list. Did you spell it correctly?")
                                 else:
                                     saved_old_amount = int(initial_list.get(curr_material))
@@ -517,13 +517,12 @@ def create_progress_tracking():
         for i in range(item_amount):
             key = prompt("Commodity name: \n> ", completer=complete, complete_while_typing=True, complete_in_thread=True)
             value = prompt("Amount needed: \n")
-            #key = key.strip()
+            key = key.strip()
             value = value.strip()
-            #key = key.replace(" ", "")
-            #if key == "landenrichmentsystems":
-            #    key = "terrainenrichmentsystems"
-            #progress_list[key.lower()] = int(value)
-            progress_list[key] = int(value)
+            key = key.replace(" ", "")
+            if key == "landenrichmentsystems":
+                key = "terrainenrichmentsystems"
+            progress_list[key.lower()] = int(value)
         formatted_list = json.dumps(progress_list, indent=4)
         with open("Construction_progress.json", "w") as outfile:
             outfile.write(formatted_list)
@@ -588,7 +587,7 @@ def colonisation_tracker():
             with open(cargo_file, "r") as cargo:
                 cargo_data = json.load(cargo)
                 current_cargo_list = cargo_data.get("Inventory", [])
-                current_cargo_data = {item['Name_Localised']: item['Count'] for item in current_cargo_list}
+                current_cargo_data = {item['Name']: item['Count'] for item in current_cargo_list}
                 if current_cargo_data != updated_cargo:
                     print("Cargo change detected")
                     for item_name in list(updated_cargo.keys()):
@@ -990,7 +989,7 @@ else:
         with open(cargo_file, "r") as cargo:
             cargo_data = json.load(cargo)
             current_cargo_list = cargo_data.get("Inventory", [])
-            current_cargo_data = {item['Name_Localised']: item['Count'] for item in current_cargo_list}
+            current_cargo_data = {item['Name']: item['Count'] for item in current_cargo_list}
     except json.JSONDecodeError:
         print(f"Json decode error")
     updated_cargo = current_cargo_data
