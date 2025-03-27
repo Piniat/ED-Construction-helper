@@ -251,6 +251,7 @@ def edit_list():
                 key = prompt("Commodity name in all lower case and no spaces: \n", completer=complete, complete_while_typing=True, complete_in_thread=True)
                 key = key.strip()
                 key = key.replace(" ", "")
+                key = re.sub(r'[^a-zA-Z0-9]', '', key)
                 if key in loaded_list:
                     del loaded_list[key]
                     print(f"{key} removed from list")
@@ -387,11 +388,12 @@ def tracking_mode():
         for i in range(item_amount):
             key = prompt("Commodity name in all lower case and no spaces: \n", completer=complete, complete_while_typing=True, complete_in_thread=True)
             value = prompt("Amount needed: \n")
-            key = key.strip()
+            #key = key.strip()
             value = value.strip()
-            key = key.replace(" ", "")
-            key = re.sub(r'[^a-zA-Z0-9]', '', key)
-            initial_list[key.lower()] = int(value)
+            #key = key.replace(" ", "")
+            #key = re.sub(r'[^a-zA-Z0-9]', '', key)
+            #initial_list[key.lower()] = int(value)
+            initial_list[key] = int(value)
         formatted_list = json.dumps(initial_list, indent=4)
         copy_over = prompt("Would you like to copy the list to Construction_progress.json for delivery tracking later? y/n\n> ")
         with open("progress.json", "w") as outfile:
@@ -431,28 +433,31 @@ def tracking_mode():
                                 timestamp = event.get('timestamp')
                                 ed_timestamp=timestamp
                                 formatted_timestamp = convert_timestamp(ed_timestamp)
-                                curr_material = event.get('Type')
+                                curr_material = event.get('Type_Localised')
                                 subtract = event.get('Count')
-                                saved_old_amount = int(initial_list.get(curr_material))
-                                new_amount = saved_old_amount - subtract
-                                with open('progress.json', 'w') as updateprogressfile:
-                                    try:
-                                        initial_list[curr_material] = new_amount
-                                        json.dump(initial_list, updateprogressfile, indent=4)
-                                    except KeyError as e:
-                                        print(f"KeyError: {e}")
-                                        missing_key = "Key formatting error or item not on list"
-                                        print(missing_key)
-                                clear_screen()
-                                print("\n" + "-" * 60)
-                                print(f"{'Timestamp':<20}: {formatted_timestamp}")
-                                print("\n" + "-" * 60)
-                                print_list()
-                                item_trips_left = new_amount/ship_cargo_space
-                                item_trips_left = math.ceil(item_trips_left)
-                                print(f"{item_trips_left} trips for {curr_material} left")
-                                print("\n" + "-" * 60)
-                                print(curr_material.capitalize() + " remaining: " + str(new_amount))
+                                if event.get('Type_Localised') not in initial_list:
+                                    print("Error, item not on list. Did you spell it correctly?")
+                                else:
+                                    saved_old_amount = int(initial_list.get(curr_material))
+                                    new_amount = saved_old_amount - subtract
+                                    with open('progress.json', 'w') as updateprogressfile:
+                                        try:
+                                            initial_list[curr_material] = new_amount
+                                            json.dump(initial_list, updateprogressfile, indent=4)
+                                        except KeyError as e:
+                                            print(f"KeyError: {e}")
+                                            missing_key = "Key formatting error or item not on list"
+                                            print(missing_key)
+                                    clear_screen()
+                                    print("\n" + "-" * 60)
+                                    print(f"{'Timestamp':<20}: {formatted_timestamp}")
+                                    print("\n" + "-" * 60)
+                                    print_list()
+                                    item_trips_left = new_amount/ship_cargo_space
+                                    item_trips_left = math.ceil(item_trips_left)
+                                    print(f"{item_trips_left} trips for {curr_material} left")
+                                    print("\n" + "-" * 60)
+                                    print(curr_material.capitalize() + " remaining: " + str(new_amount))
                             elif event.get('event') == "Shutdown":
                                 game_shutdown()
                 except json.JSONDecodeError:
@@ -510,12 +515,15 @@ def create_progress_tracking():
     elif copy_progress == "n":
         item_amount = int(prompt("How many different commodities do you need for construction? \n> ", cursor=CursorShape.BLINKING_BLOCK))
         for i in range(item_amount):
-            key = prompt("Commodity name in all lower case and no spaces: \n> ", completer=complete, complete_while_typing=True, complete_in_thread=True)
+            key = prompt("Commodity name: \n> ", completer=complete, complete_while_typing=True, complete_in_thread=True)
             value = prompt("Amount needed: \n")
-            key = key.strip()
+            #key = key.strip()
             value = value.strip()
-            key = key.replace(" ", "")
-            progress_list[key.lower()] = int(value)
+            #key = key.replace(" ", "")
+            #if key == "landenrichmentsystems":
+            #    key = "terrainenrichmentsystems"
+            #progress_list[key.lower()] = int(value)
+            progress_list[key] = int(value)
         formatted_list = json.dumps(progress_list, indent=4)
         with open("Construction_progress.json", "w") as outfile:
             outfile.write(formatted_list)
@@ -533,6 +541,7 @@ def colonisation_tracker():
     global item_count_list
     global delivered_amount
     global switched
+    global item_name
     ready_to_print = False
     if initialized == 0 or switched == True:
         clear_screen()
@@ -579,7 +588,7 @@ def colonisation_tracker():
             with open(cargo_file, "r") as cargo:
                 cargo_data = json.load(cargo)
                 current_cargo_list = cargo_data.get("Inventory", [])
-                current_cargo_data = {item['Name']: item['Count'] for item in current_cargo_list}
+                current_cargo_data = {item['Name_Localised']: item['Count'] for item in current_cargo_list}
                 if current_cargo_data != updated_cargo:
                     print("Cargo change detected")
                     for item_name in list(updated_cargo.keys()):
@@ -614,24 +623,25 @@ def colonisation_tracker():
                                 item_name_list.append(item_name)
                                 item_count_list.append(delivered_amount)
                                 # Update Construction_progress.json
-                            try:
-                                if os.path.isfile("Construction_progress.json"):
-                                    with open("Construction_progress.json", "r") as progress_file:
-                                        progress_data = json.load(progress_file)
-                                else:
-                                    progress_data = {}
-                                # Update delivered amount
-                                if item_name in progress_data:
-                                    progress_data[item_name] = progress_data[item_name] - delivered_amount
-                                else:
-                                    #progress_data[item_name] = delivered_amount
-                                    print("Item not found in progress list. Did you spell it correctly?")
-                                # Write updated progress to file
-                                with open("Construction_progress.json", "w") as update_file:
-                                    json.dump(progress_data, update_file, indent=4)
-                                    ready_to_print = True
-                            except (json.JSONDecodeError, FileNotFoundError) as e:
-                                print(f"Error updating Construction_progress.json: {e}")
+                                try:
+                                    if os.path.isfile("Construction_progress.json"):
+                                        with open("Construction_progress.json", "r") as progress_file:
+                                            progress_data = json.load(progress_file)
+                                    else:
+                                        progress_data = {}
+                                    # Update delivered amount
+                                    if item_name in progress_data:
+                                        progress_data[item_name] = progress_data[item_name] - delivered_amount
+                                    else:
+                                        #progress_data[item_name] = delivered_amount
+                                        print("Item not found in progress list. Did you spell it correctly?")
+                                    # Write updated progress to file
+                                    with open("Construction_progress.json", "w") as update_file:
+                                        json.dump(progress_data, update_file, indent=4)
+                                        ready_to_print = True
+                                    #print_construction_progress()
+                                except (json.JSONDecodeError, FileNotFoundError) as e:
+                                    print(f"Error updating Construction_progress.json: {e}")
                         #print stuff for getting stuff from your carrier or buying it
                         elif ship_docked and not docked_at_construction:
                             print("Docked at regular sation/fleet carrier")
@@ -690,7 +700,7 @@ def print_construction_progress():
                 print(f"Error reading cargo file: {e}")
 
 clear_screen()
-print('ED Construction helper v0.4.10-alpha \n Type "help" for a list of commands')
+print('ED Construction helper v0.5.0-alpha \n Type "help" for a list of commands')
 if not os.path.isfile('config.ini'):
     path = input("Input game journal file path without quotes:  \n")
     config = configparser.ConfigParser() #initiates config parser
@@ -971,7 +981,7 @@ else:
         "Toxic Waste",
         "Battle Weapons",
         "Landmines",
-        "Non Lethal Weapons",
+        "Non-Lethal Weapons",
         "Personal Weapons",
         "Reactive Armour"
     ]
@@ -980,7 +990,7 @@ else:
         with open(cargo_file, "r") as cargo:
             cargo_data = json.load(cargo)
             current_cargo_list = cargo_data.get("Inventory", [])
-            current_cargo_data = {item['Name']: item['Count'] for item in current_cargo_list}
+            current_cargo_data = {item['Name_Localised']: item['Count'] for item in current_cargo_list}
     except json.JSONDecodeError:
         print(f"Json decode error")
     updated_cargo = current_cargo_data
