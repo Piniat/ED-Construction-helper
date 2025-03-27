@@ -643,7 +643,7 @@ def colonisation_tracker():
                                     print(f"Error updating Construction_progress.json: {e}")
                         #print stuff for getting stuff from your carrier or buying it
                         elif ship_docked and not docked_at_construction:
-                            print("Docked at regular sation/fleet carrier")
+                            #print("Docked at regular sation/fleet carrier")
                             if item_name not in updated_cargo:
                                 print(f"New cargo detected. Bought/transferred: {item_name} - {item_count} tonnes")
                             elif item_count > updated_cargo.get(item_name, 0):
@@ -678,11 +678,11 @@ def print_construction_progress():
             for item, count in progress_data.items():
                 total += int(count)
                 if count > 0:
-                    print(f"    {item}: {count}")
+                    print(f"    {item.capitalize()}: {count}")
                 elif count < 0:
-                    print(f"    ✔!  {item}: {count} - Overdelivered! Did someone else help deliver?")
+                    print(f"    ✔!  {item.capitalize()}: {count} - Overdelivered! Did someone else help deliver?")
                 elif count == 0:
-                    print(f"    ✔  {item}: {count}")
+                    print(f"    ✔  {item.capitalize()}: {count}")
         print("\n" + "-" * 60)
         trips_left = total/ship_cargo_space
         trips_left = math.ceil(trips_left)
@@ -699,7 +699,7 @@ def print_construction_progress():
                 print(f"Error reading cargo file: {e}")
 
 clear_screen()
-print('ED Construction helper v0.5.0-alpha \n Type "help" for a list of commands')
+print('ED Construction helper v0.5.0-beta \n Type "help" for a list of commands')
 if not os.path.isfile('config.ini'):
     path = input("Input game journal file path without quotes:  \n")
     config = configparser.ConfigParser() #initiates config parser
