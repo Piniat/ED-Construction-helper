@@ -2,3 +2,4 @@ ndjson==0.3.1
 prompt_toolkit==3.0.50
 pytz==2025.1
 tzlocal==5.3.1
+requests==2.32.3
