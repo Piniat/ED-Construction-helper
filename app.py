@@ -9,6 +9,8 @@ from prompt_toolkit import prompt
 from prompt_toolkit.cursor_shapes import CursorShape
 from prompt_toolkit.patch_stdout import patch_stdout
 from prompt_toolkit.completion import WordCompleter
+from prompt_toolkit.shortcuts import prompt
+from prompt_toolkit.styles import Style
 from datetime import datetime
 from tzlocal import get_localzone
 import pytz
@@ -16,6 +18,12 @@ import shutil
 import math
 import re
 import sys
+
+#prompt colors (only red for now) also ignore the random positioning of this
+style = Style.from_dict({
+    "":          "#ff0066",
+    "iwarning":  "#ff0000",
+})
 
 #functions  
 
@@ -142,6 +150,7 @@ def get_latest_journal():
     return newest_file
 
 def user_input():
+    global message
     global app_mode
     global ship_docked
     global docked_at_construction
@@ -160,17 +169,17 @@ def user_input():
                 print("List of commands: \n exit - exits the program \n app-mode-1 - switches to construction progress tracking \n app-mode-2 - switches to app to shopping list mode \n app-mode-3 - switches app to journal monitoring mode \n edit-shopping-list - allows you to edit shopping list in-app \n override-docked - overrides docked status in mode 3 \n override-docked-construction - overrides if you are docked at a constructions site / megaship (any cargo removed from your hold will be counted towards progress to buiding) \n edit-ship-cargo")
             elif usr_input == "app-mode-1":
                 switched = True
-                just_started = 0
+                just_started = False
                 app_mode = "1"
                 print("Switched to construction progress tracking.")
             elif usr_input == "app-mode-2":
                 switched = True
-                just_started = 0
+                just_started = False
                 app_mode = "2"
                 print("Switched to shopping list tracking")
             elif usr_input == "app-mode-3":
                 switched = True
-                just_started = 0
+                just_started = False
                 app_mode = "3"
                 print("Switched to journal logging mode")
             elif usr_input == "override-docked":
@@ -203,28 +212,61 @@ def user_input():
                 ship_cargo_space = int(prompt("How much cargo space does your ship have? \n> "))
                 print("Updated ship cargo space")
             elif usr_input == "reset-progress":
-                autocomplete = WordCompleter(["Shopping", "Delivery"], ignore_case=True)
-                which = prompt("Do you want to delete the commodity shopping list or colonisation deliver list? Shopping/Delivery\n> ", completer=autocomplete, complete_while_typing=True, complete_in_thread=True)
-                if which == "Shopping":
-                    try:
-                        os.remove("progress.json")
-                        print("File removed!")
-                        print("Restarting...")
-                        time.sleep(0.5)
-                        python = sys.executable
-                        os.execv(python, [python] + sys.argv)
-                    except:
-                        print("Error. File not found")
-                elif which == "Delivery":
-                    try:
-                        os.remove("Construction_progress.json")
-                        print("File removed!")
-                        print("Restarting...")
-                        time.sleep(0.5)
-                        python = sys.executable
-                        os.execv(python, [python] + sys.argv)
-                    except:
-                        print("Error. File not found")
+                autocomplete = WordCompleter(["Shopping", "Delivery", "both"], ignore_case=True)
+                which = prompt("Do you want to delete the commodity shopping list, colonisation delivery list or both?\n 1-Shopping list \n 2-Delivery tracker \n 3-both \n exit \n> ", completer=autocomplete, complete_while_typing=True, complete_in_thread=True)
+                if which == "1":
+                    sure = prompt(f"Are you sure? THIS CANNOT BE UNDONE! Continue anyway? y/n \n>", style=style)
+                    if sure == "y":
+                        try:
+                            os.remove("progress.json")
+                            print("File removed!")
+                            print("Restarting...")
+                            time.sleep(0.5)
+                            python = sys.executable
+                            os.execv(python, [python] + sys.argv)
+                        except:
+                            print("Error. File not found")
+                    elif sure == "n":
+                        print("Operation cancelled")
+                    else:
+                        print("Invalid option. Cancelling...")
+                elif which == "2":
+                    sure = prompt(f"Are you sure? THIS CANNOT BE UNDONE! Continue anyway? y/n \n>", style=style)
+                    if sure == "y":
+                        try:
+                            os.remove("Construction_progress.json")
+                            print("File removed!")
+                            print("Restarting...")
+                            time.sleep(0.5)
+                            python = sys.executable
+                            os.execv(python, [python] + sys.argv)
+                        except:
+                            print("Error. File not found")
+                    elif sure == "n":
+                        print("Operation cancelled")
+                    else:
+                        print("Invalid option. Cancelling...")
+                elif which == "3":
+                    sure = prompt(f"Are you sure? THIS CANNOT BE UNDONE! Continue anyway? y/n \n>", style=style)
+                    if sure == "y":
+                        try:
+                            os.remove("Construction_progress.json")
+                            os.remove("progress.json")
+                            print("Files removed!")
+                            print("Restarting...")
+                            time.sleep(0.5)
+                            python = sys.executable
+                            os.execv(python, [python] + sys.argv)
+                        except:
+                            print("Error. File not found")
+                    elif sure == "n":
+                        print("Operation cancelled")
+                    else:
+                        print("Invalid option. Cancelling...")
+                elif which == "exit":
+                    print("Cancelled!")
+                else:
+                    print("Invalid option")
             #elif usr_input == "debug":
             #    print_construction_progress()
             else:
@@ -323,9 +365,9 @@ def convert_timestamp(ed_timestamp):
 
 def log_mode():
     global input_started
-    if input_started == 0:
+    if input_started == False:
         start_user_input()
-        input_started = 1
+        input_started = True
     for line in lines:
                 try:
                     curr_event = ndjson.loads(line.strip())
@@ -380,8 +422,7 @@ def tracking_mode():
     global all_comodities
     global switched
     complete = WordCompleter(all_comodities, ignore_case=True)
-    if not os.path.isfile('progress.json') and initialized == 0:
-        #initial_list = {"aluminium":7143, "buildingfabricators":394, "ceramiccomposites":816, "cmmcomposite":6800, "computercomponents":98, "copper":390, "emergencypowercells":71, "evacuationshelter":203, "foodcartridges":139, "fruitandvegetables":97, "liquidoxygen":2455, "medicaldiagnosticequipment":46, "nonleathalweapons":33, "polymers":672, "powergenerators":70, "semiconductors":101, "steel":10659, "structuralregulators":665, "superconductors":134, "surfacestabilisers":603, "survivalequipment":57, "landenrichmentsystems":69, "titanium":5498}
+    if not os.path.isfile('progress.json') and initialized == False:
         initial_list = {}
         item_amount = int(prompt("How many items do you plan on buying? \n"))
         i = 0
@@ -395,7 +436,6 @@ def tracking_mode():
             if key == "LandEnrichmentSystems":
                 key = "terrainenrichmentsystems"
             initial_list[key.lower()] = int(value)
-            #initial_list[key] = int(value)
         formatted_list = json.dumps(initial_list, indent=4)
         copy_over = prompt("Would you like to copy the list to Construction_progress.json for delivery tracking later? y/n\n> ")
         with open("progress.json", "w") as outfile:
@@ -407,10 +447,10 @@ def tracking_mode():
             print_list()
         elif copy_over == "n":
             print_list()
-            initialized = 1
+            initialized = True
         else:
             print("Error. Incorrect option. Defaulting to no")
-    elif initialized == 0 or switched is True:
+    elif initialized == False or switched is True:
         with open('progress.json', 'r') as openfile:
             initial_list = json.load(openfile)
             formatted_list = json.dumps(initial_list, indent=4)
@@ -418,11 +458,11 @@ def tracking_mode():
             ship_cargo_space = int(prompt("Type the cargo capacity of your ship:\n> ", cursor=CursorShape.BLINKING_BLOCK))
             clear_screen()
             print_list()
-            initialized = 1
+            initialized = True
             switched = False
-    if input_started == 0:
+    if input_started == False:
         start_user_input()
-        input_started = 1
+        input_started = True
     for line in lines:
                 try:
                     curr_event = ndjson.loads(line.strip())
@@ -487,11 +527,20 @@ def print_list():
     for material, amount in initial_list.items():
         total += amount
         if amount > 0:
-            print(f"    {material.capitalize()}: {amount}")
+            if material == "terrainenrichmentsystems":
+                print(f"    Landenrichmentsystems: {amount} - Landenrichmentsystems")
+            else:
+                print(f"    {material.capitalize()}: {amount}")
         elif amount == 0:
-            print(f"    ✔  {material.capitalize()}: {amount}")
+            if material == "terrainenrichmentsystems":
+                print(f"    Landenrichmentsystems: {amount} - Landenrichmentsystems")
+            else:
+                print(f"    ✔  {material.capitalize()}: {amount}")
         elif amount < 0:
-            print(f"    ✔!  {material.capitalize()}: {amount} - overstock!")
+            if material == "terrainenrichmentsystems":
+                print(f"    Landenrichmentsystems: {amount} - Landenrichmentsystems")
+            else:
+                print(f"    ✔!  {material.capitalize()}: {amount} - overstock!")
     print("\n" + "-" * 60)
     trips_left = total/ship_cargo_space
     trips_left = math.ceil(trips_left)
@@ -529,6 +578,7 @@ def create_progress_tracking():
         with open("Construction_progress.json", "w") as outfile:
             outfile.write(formatted_list)
 
+#Colonisation delivery tracker
 def colonisation_tracker():
     global opened_json
     global journal_folder
@@ -544,7 +594,8 @@ def colonisation_tracker():
     global switched
     global item_name
     ready_to_print = False
-    if initialized == 0 or switched == True:
+    #initial setup for tracking
+    if initialized == False or switched == True:
         clear_screen()
         ship_cargo_space = int(prompt("Type the cargo capacity of your ship:\n> ", cursor=CursorShape.BLINKING_BLOCK))
         item_name_list = []
@@ -552,16 +603,18 @@ def colonisation_tracker():
         delivered_amount = 0
         print_construction_progress()
         print("Helpful comands:\nhelp\noverride-docked\noverride-docked-construction")
-        initialized = 1
+        initialized = True
         switched = False
+    #checks if progress file exists
     if not os.path.isfile("Construction_progress.json"):
         with open("Construction_progress.json", "w") as progress_file:
             create_progress_tracking()
             print_construction_progress()
     # Start user input if not started
-    if input_started == 0:
+    if input_started == False:
         start_user_input()
-        input_started = 1
+        input_started = True
+    # set file path to the appropiate format matching the os
     cargo_file = os.path.join(journal_folder, "Cargo.json")
     for line in lines:
         try:
@@ -570,15 +623,18 @@ def colonisation_tracker():
                 if event.get('event') == "Docked":
                     print("Docked at a station")
                     ship_docked = True
+                    #checks for colonisationcontribution service and if available sets docked_at_construction to allow tracking
                     if "colonisationcontribution" in event.get('StationServices', []):
                         print("Docked at a construction ship, tracking deliveries.")
                         docked_at_construction = True
                     else:
                         docked_at_construction = False
+                #clears both docked statuses
                 elif event.get('event') == "Undocked":
                     ship_docked = False
                     docked_at_construction = False
                     print("Undocked from station")
+                #terminates app if shutdown event is detected
                 elif event.get('event') == "Shutdown":
                     game_shutdown()
         except json.JSONDecodeError:
@@ -586,73 +642,72 @@ def colonisation_tracker():
             continue
     if ship_docked:
         try:
+            #opens cargo.json file
             with open(cargo_file, "r") as cargo:
                 cargo_data = json.load(cargo)
+                #extracts cargo data
                 current_cargo_list = cargo_data.get("Inventory", [])
                 current_cargo_data = {item['Name']: item['Count'] for item in current_cargo_list}
                 if current_cargo_data != updated_cargo:
                     print("Cargo change detected")
+                    #loops through every time to find which one/s have been fully removed from cargo.json
                     for item_name in list(updated_cargo.keys()):
                         if item_name not in current_cargo_data and docked_at_construction:
+                            #appends items names and amounts to a list used to update progress and to display
                             item_name_list.append(item_name)
                             delivered_amount = updated_cargo[item_name]
                             item_count_list.append(delivered_amount)
+                            #attempts to updated progress file
                             try:
                                 if os.path.isfile("Construction_progress.json"):
                                     with open("Construction_progress.json", "r") as progress_file:
                                         progress_data = json.load(progress_file)
                                 else:
                                     progress_data = {}
-                                # Update delivered amount
                                 if item_name in progress_data:
                                     progress_data[item_name] = progress_data[item_name] - delivered_amount
                                 else:
-                                    #progress_data[item_name] = delivered_amount
                                     print("Item not found in progress list. Did you spell it correctly?")
                                 # Write updated progress to file
                                 with open("Construction_progress.json", "w") as update_file:
                                     json.dump(progress_data, update_file, indent=4)
                                     ready_to_print = True
-                                #print_construction_progress()
                             except (json.JSONDecodeError, FileNotFoundError) as e:
                                 print(f"Error updating Construction_progress.json: {e}")
+                    #loops through every time to find which one/s have been only partially removed from cargo.json
                     for item_name, item_count in current_cargo_data.items():
                         if docked_at_construction:
                             if item_count < updated_cargo.get(item_name, 0):
-                                #print_construction_progress()
                                 delivered_amount = updated_cargo[item_name] - item_count
+                                #appends items names and amounts to a list used to update progress and to display
                                 item_name_list.append(item_name)
                                 item_count_list.append(delivered_amount)
-                                # Update Construction_progress.json
+                                # attempts to update Construction_progress.json
                                 try:
                                     if os.path.isfile("Construction_progress.json"):
                                         with open("Construction_progress.json", "r") as progress_file:
                                             progress_data = json.load(progress_file)
                                     else:
                                         progress_data = {}
-                                    # Update delivered amount
                                     if item_name in progress_data:
                                         progress_data[item_name] = progress_data[item_name] - delivered_amount
                                     else:
-                                        #progress_data[item_name] = delivered_amount
                                         print("Item not found in progress list. Did you spell it correctly?")
-                                    # Write updated progress to file
                                     with open("Construction_progress.json", "w") as update_file:
                                         json.dump(progress_data, update_file, indent=4)
                                         ready_to_print = True
-                                    #print_construction_progress()
                                 except (json.JSONDecodeError, FileNotFoundError) as e:
                                     print(f"Error updating Construction_progress.json: {e}")
-                        #print stuff for getting stuff from your carrier or buying it
+                        #just displays amounts of commodities bought/transferred or stored. Serves no other function
                         elif ship_docked and not docked_at_construction:
-                            #print("Docked at regular sation/fleet carrier")
                             if item_name not in updated_cargo:
                                 print(f"New cargo detected. Bought/transferred: {item_name} - {item_count} tonnes")
                             elif item_count > updated_cargo.get(item_name, 0):
                                 print(f"Bought/transferred {item_name}: {item_count - updated_cargo[item_name]} tonnes")
                             elif item_count < updated_cargo.get(item_name, item_count):
                                 print(f"Stored: {updated_cargo[item_name] - item_count} tonnes of {item_name}")     
-                    updated_cargo = current_cargo_data  # Update cargo state
+                    #updates cargo data
+                    updated_cargo = current_cargo_data
         except (json.JSONDecodeError, FileNotFoundError) as e:
             print(f"Error reading cargo file: {e}")
         if ready_to_print == True:
@@ -660,6 +715,7 @@ def colonisation_tracker():
             ready_to_print = False
     time.sleep(0.1)
 
+#displays the construction delivery progress
 def print_construction_progress():
     global ship_cargo_space
     global total
@@ -680,11 +736,20 @@ def print_construction_progress():
             for item, count in progress_data.items():
                 total += int(count)
                 if count > 0:
-                    print(f"    {item.capitalize()}: {count}")
+                    if item == "terrainenrichmentsystems":
+                        print(f"    Landenrichmentsystems: {count} - Landenrichmentsystems")
+                    else:
+                        print(f"    {item.capitalize()}: {count}")
                 elif count < 0:
-                    print(f"    ✔!  {item.capitalize()}: {count} - Overdelivered! Did someone else help deliver?")
+                    if item == "terrainenrichmentsystems":
+                        print(f"    Landenrichmentsystems: {count} - Landenrichmentsystems")
+                    else:
+                        print(f"    ✔!  {item.capitalize()}: {count} - Overdelivered! Did someone else help deliver?")
                 elif count == 0:
-                    print(f"    ✔  {item.capitalize()}: {count}")
+                    if item == "terrainenrichmentsystems":
+                        print(f"    Landenrichmentsystems: {count} - Landenrichmentsystems")
+                    else:
+                        print(f"    ✔  {item.capitalize()}: {count}")
         print("\n" + "-" * 60)
         trips_left = total/ship_cargo_space
         trips_left = math.ceil(trips_left)
@@ -692,6 +757,8 @@ def print_construction_progress():
         print("\n" + "-" * 60)
         if docked_at_construction:
             for item in item_name_list:
+                if item_name_list[loops] == "terrainenrichmentsystems":
+                    print(f"Delivered {item_count_list[loops]} of Landenrichmentsystems")
                 print(f"Delivered {item_count_list[loops]} of {item_name_list[loops]}")
                 loops += 1
             item_name_list.clear()
@@ -702,330 +769,320 @@ def print_construction_progress():
 
 clear_screen()
 print('ED Construction helper v0.5.0-beta \n Type "help" for a list of commands')
-if not os.path.isfile('config.ini'):
-    path = input("Input game journal file path without quotes:  \n")
-    config = configparser.ConfigParser() #initiates config parser
-    config['JOURNAL_PATH'] = {'path': path} #creates section, key and value
-    with open('config.ini', 'w') as configfile:
-        config.write(configfile)
-    print("Config file created. Please restart the program.")
+config = configparser.ConfigParser()
+config.read('config.ini')
+config.sections()
+global journal_folder
+journal_folder = config['JOURNAL_PATH']['path']
+journal_file_path = get_latest_journal()
+if journal_file_path == "None":
+    print("No journal files found. Exiting...")
     time.sleep(1)
     close_app()
-else:
-    config = configparser.ConfigParser()
-    config.read('config.ini')
-    config.sections()
-    global journal_folder
-    journal_folder = config['JOURNAL_PATH']['path']
-    journal_file_path = get_latest_journal()
-    if journal_file_path == "None":
-        print("No journal files found. Exiting...")
-        time.sleep(1)
-        close_app()
-    if not journal_file_path:
-        print("No journal files found.")
-        time.sleep(1)
-        close_app()
-    app_mode_selection()
-    global initialized
-    global input_started
-    global ship_docked
-    global opened_json
-    global t1
-    global docked_at_construction
-    global file_detected
-    global updated_cargo
-    global all_comodities
-    global ship_cargo_space
-    global switched
-    ship_cargo_space = 0
-    #nice list down there huh?
-    all_comodities = [
-        "Agronomic Treatment",
-        "Explosives",
-        "Hydrogen Fuel",
-        "Hydrogen Peroxide",
-        "Liquid Oxygen",
-        "Mineral Oil",
-        "Nerve Agents",
-        "Pesticides",
-        "Rockforth Fertiliser",
-        "Surface Stabilisers",
-        "Synthetic Reagents",
-        "Tritium",
-        "Water",
-        "Clothing",
-        "Consumer Technology",
-        "Domestic Appliances",
-        "Evacuation Shelter",
-        "Survival Equipment",
-        "Algae",
-        "Animal Meat",
-        "Coffee",
-        "Fish",
-        "Food Cartridges",
-        "Fruit and Vegetables",
-        "Grain",
-        "Synthetic Meat",
-        "Tea",
-        "Ceramic Composites",
-        "CMM Composite",
-        "Insulating Membrane",
-        "Meta-Alloys",
-        "Micro-Weave Cooling Hoses",
-        "Neofabric Insulation",
-        "Polymers",
-        "Semiconductors",
-        "Superconductors",
-        "Beer",
-        "Bootleg Liquor",
-        "Liquor",
-        "Narcotics",
-        "Onionhead Gamma Strain",
-        "Tobacco",
-        "Wine",
-        "Articulation Motors",
-        "Atmospheric Processors",
-        "Building Fabricators",
-        "Crop Harvesters",
-        "Emergency Power Cells",
-        "Energy Grid Assembly",
-        "Exhaust Manifold",
-        "Geological Equipment",
-        "Heatsink Interlink",
-        "HN Shock Mount",
-        "Magnetic Emitter Coil",
-        "Marine Equipment",
-        "Microbial Furnaces",
-        "Mineral Extractors",
-        "Modular Terminals",
-        "Power Converter",
-        "Power Generators",
-        "Power Transfer Bus",
-        "Radiation Baffle",
-        "Reinforced Mounting Plate",
-        "Skimmer Components",
-        "Thermal Cooling Units",
-        "Water Purifiers",
-        "Advanced Medicines",
-        "Agri-Medicines",
-        "Basic Medicines",
-        "Combat Stabilisers",
-        "Performance Enhancers",
-        "Progenitor Cells",
-        "Aluminium",
-        "Beryllium",
-        "Bismuth",
-        "Cobalt",
-        "Copper",
-        "Gallium",
-        "Gold",
-        "Hafnium 178",
-        "Indium",
-        "Lanthanum",
-        "Lithium",
-        "Osmium",
-        "Palladium",
-        "Platinum",
-        "Platinum Alloy",
-        "Praseodymium",
-        "Samarium",
-        "Silver",
-        "Tantalum",
-        "Thallium",
-        "Thorium",
-        "Titanium",
-        "Uranium",
-        "Alexandrite",
-        "Bauxite",
-        "Benitoite",
-        "Bertrandite",
-        "Bromellite",
-        "Coltan",
-        "Cryolite",
-        "Gallite",
-        "Goslarite",
-        "Grandidierite",
-        "Indite",
-        "Jadeite",
-        "Lepidolite",
-        "Lithium Hydroxide",
-        "Low Temperature Diamonds",
-        "Methane Clathrate",
-        "Methanol Monohydrate Crystals",
-        "Moissanite",
-        "Monazite",
-        "Musgravite",
-        "Painite",
-        "Pyrophyllite",
-        "Rhodplumsite",
-        "Rutile",
-        "Serendibite",
-        "Taaffeite",
-        "Uraninite",
-        "Void Opals",
-        "AI Relics",
-        "Ancient Artefact",
-        "Ancient Key",
-        "Anomaly Particles",
-        "Antimatter Containment Unit",
-        "Antique Jewellery",
-        "Antiquities",
-        "Assault Plans",
-        "Black Box",
-        "Commercial Samples",
-        "Damaged Escape Pod",
-        "Data Core",
-        "Diplomatic Bag",
-        "Earth Relics",
-        "Encrypted Correspondence",
-        "Encrypted Data Storage",
-        "Experimental Chemicals",
-        "Fossil Remnants",
-        "Gene Bank",
-        "Geological Samples",
-        "Guardian Casket",
-        "Guardian Orb",
-        "Guardian Relic",
-        "Guardian Tablet",
-        "Guardian Totem",
-        "Guardian Urn",
-        "Hostage",
-        "Large Survey Data Cache",
-        "Military Intelligence",
-        "Military Plans",
-        "Mollusc Brain Tissue",
-        "Mollusc Fluid",
-        "Mollusc Membrane",
-        "Mollusc Mycelium",
-        "Mollusc Soft Tissue",
-        "Mollusc Spores",
-        "Mysterious Idol",
-        "Occupied Escape Pod",
-        "Personal Effects",
-        "Pod Core Tissue",
-        "Pod Dead Tissue",
-        "Pod Mesoglea",
-        "Pod Outer Tissue",
-        "Pod Shell Tissue",
-        "Pod Surface Tissue",
-        "Pod Tissue",
-        "Political Prisoner",
-        "Precious Gems",
-        "Prohibited Research Materials",
-        "Prototype Tech",
-        "Rare Artwork",
-        "Rebel Transmissions",
-        "SAP 8 Core Container",
-        "Scientific Research",
-        "Scientific Samples",
-        "Small Survey Data Cache",
-        "Space Pioneer Relics",
-        "Tactical Data",
-        "Technical Blueprints",
-        "Thargoid Basilisk Tissue Sample",
-        "Thargoid Biological Matter",
-        "Thargoid Bio-Storage Capsule",
-        "Thargoid Cyclops Tissue Sample",
-        "Thargoid Glaive Tissue Sample",
-        "Thargoid Heart",
-        "Thargoid Hydra Tissue Sample",
-        "Thargoid Link",
-        "Thargoid Orthrus Tissue Sample",
-        "Thargoid Probe",
-        "Thargoid Resin",
-        "Thargoid Sensor",
-        "Thargoid Medusa Tissue Sample",
-        "Thargoid Scout Tissue Sample",
-        "Thargoid Technology Samples",
-        "Time Capsule",
-        "Titan Deep Tissue Sample",
-        "Titan Maw Deep Tissue Sample",
-        "Titan Maw Partial Tissue Sample",
-        "Titan Maw Tissue Sample",
-        "Titan Partial Tissue Sample",
-        "Titan Tissue Sample",
-        "Trade Data",
-        "Trinkets of Hidden Fortune",
-        "Unclassified Relic",
-        "Unoccupied Escape Pod",
-        "Unstable Data Core",
-        "Wreckage Components",
-        "Imperial Slaves",
-        "Slaves",
-        "Advanced Catalysers",
-        "Animal Monitors",
-        "Aquaponic Systems",
-        "Auto Fabricators",
-        "Bioreducing Lichen",
-        "Computer Components",
-        "H.E. Suits",
-        "Hardware Diagnostic Sensor",
-        "Ion Distributor",
-        "Land Enrichment Systems",
-        "Medical Diagnostic Equipment",
-        "Micro Controllers",
-        "Muon Imager",
-        "Nanobreakers",
-        "Resonating Separators",
-        "Robotics",
-        "Structural Regulators",
-        "Telemetry Suite",
-        "Conductive Fabrics",
-        "Leather",
-        "Military Grade Fabrics",
-        "Natural Fabrics",
-        "Synthetic Fabrics",
-        "Biowaste",
-        "Chemical Waste",
-        "Scrap",
-        "Toxic Waste",
-        "Battle Weapons",
-        "Landmines",
-        "Non-Lethal Weapons",
-        "Personal Weapons",
-        "Reactive Armour",
-        "Terrain Enrichment Systems",
-        "Steel"
-    ]
-    cargo_file = os.path.join(journal_folder, "Cargo.json")
-    try:
-        with open(cargo_file, "r") as cargo:
-            cargo_data = json.load(cargo)
-            current_cargo_list = cargo_data.get("Inventory", [])
-            current_cargo_data = {item['Name']: item['Count'] for item in current_cargo_list}
-    except json.JSONDecodeError:
-        print(f"Json decode error")
-    updated_cargo = current_cargo_data
-    file_detected = True
-    docked_at_construction = False
-    opened_json = False
-    ship_docked = False
-    switched = False
-    input_started = 0
-    initialized = 0
-    just_started = 1
-    try:
-        with open(journal_file_path) as f:
-            f.seek(0, os.SEEK_END)
-            while True:
-                lines = f.readlines()
-                if not lines and just_started == 0 and app_mode is not "1":
-                    time.sleep(0.1)
-                    continue
-                if app_mode == "3":
-                    just_started = 0
-                    if input_started == 0:
-                        input_started = 1
-                    log_mode()
-                elif app_mode == "2":
-                    just_started = 0
-                    tracking_mode()
-                elif app_mode == "1":
-                    just_started = 0
-                    colonisation_tracker()
-                    time.sleep(0.3)
-    except json.JSONDecodeError:
-        print(f"Json decode error")
-                
-                
+if not journal_file_path:
+    print("No journal files found.")
+    time.sleep(1)
+    close_app()
+app_mode_selection()
+global initialized
+global input_started
+global ship_docked
+global opened_json
+global t1
+global docked_at_construction
+global file_detected
+global updated_cargo
+global all_comodities
+global ship_cargo_space
+global switched
+ship_cargo_space = 0
+#nice list down there huh?
+all_comodities = [
+    "Agronomic Treatment",
+    "Explosives",
+    "Hydrogen Fuel",
+    "Hydrogen Peroxide",
+    "Liquid Oxygen",
+    "Mineral Oil",
+    "Nerve Agents",
+    "Pesticides",
+    "Rockforth Fertiliser",
+    "Surface Stabilisers",
+    "Synthetic Reagents",
+    "Tritium",
+    "Water",
+    "Clothing",
+    "Consumer Technology",
+    "Domestic Appliances",
+    "Evacuation Shelter",
+    "Survival Equipment",
+    "Algae",
+    "Animal Meat",
+    "Coffee",
+    "Fish",
+    "Food Cartridges",
+    "Fruit and Vegetables",
+    "Grain",
+    "Synthetic Meat",
+    "Tea",
+    "Ceramic Composites",
+    "CMM Composite",
+    "Insulating Membrane",
+    "Meta-Alloys",
+    "Micro-Weave Cooling Hoses",
+    "Neofabric Insulation",
+    "Polymers",
+    "Semiconductors",
+    "Superconductors",
+    "Beer",
+    "Bootleg Liquor",
+    "Liquor",
+    "Narcotics",
+    "Onionhead Gamma Strain",
+    "Tobacco",
+    "Wine",
+    "Articulation Motors",
+    "Atmospheric Processors",
+    "Building Fabricators",
+    "Crop Harvesters",
+    "Emergency Power Cells",
+    "Energy Grid Assembly",
+    "Exhaust Manifold",
+    "Geological Equipment",
+    "Heatsink Interlink",
+    "HN Shock Mount",
+    "Magnetic Emitter Coil",
+    "Marine Equipment",
+    "Microbial Furnaces",
+    "Mineral Extractors",
+    "Modular Terminals",
+    "Power Converter",
+    "Power Generators",
+    "Power Transfer Bus",
+    "Radiation Baffle",
+    "Reinforced Mounting Plate",
+    "Skimmer Components",
+    "Thermal Cooling Units",
+    "Water Purifiers",
+    "Advanced Medicines",
+    "Agri-Medicines",
+    "Basic Medicines",
+    "Combat Stabilisers",
+    "Performance Enhancers",
+    "Progenitor Cells",
+    "Aluminium",
+    "Beryllium",
+    "Bismuth",
+    "Cobalt",
+    "Copper",
+    "Gallium",
+    "Gold",
+    "Hafnium 178",
+    "Indium",
+    "Lanthanum",
+    "Lithium",
+    "Osmium",
+    "Palladium",
+    "Platinum",
+    "Platinum Alloy",
+    "Praseodymium",
+    "Samarium",
+    "Silver",
+    "Tantalum",
+    "Thallium",
+    "Thorium",
+    "Titanium",
+    "Uranium",
+    "Alexandrite",
+    "Bauxite",
+    "Benitoite",
+    "Bertrandite",
+    "Bromellite",
+    "Coltan",
+    "Cryolite",
+    "Gallite",
+    "Goslarite",
+    "Grandidierite",
+    "Indite",
+    "Jadeite",
+    "Lepidolite",
+    "Lithium Hydroxide",
+    "Low Temperature Diamonds",
+    "Methane Clathrate",
+    "Methanol Monohydrate Crystals",
+    "Moissanite",
+    "Monazite",
+    "Musgravite",
+    "Painite",
+    "Pyrophyllite",
+    "Rhodplumsite",
+    "Rutile",
+    "Serendibite",
+    "Taaffeite",
+    "Uraninite",
+    "Void Opals",
+    "AI Relics",
+    "Ancient Artefact",
+    "Ancient Key",
+    "Anomaly Particles",
+    "Antimatter Containment Unit",
+    "Antique Jewellery",
+    "Antiquities",
+    "Assault Plans",
+    "Black Box",
+    "Commercial Samples",
+    "Damaged Escape Pod",
+    "Data Core",
+    "Diplomatic Bag",
+    "Earth Relics",
+    "Encrypted Correspondence",
+    "Encrypted Data Storage",
+    "Experimental Chemicals",
+    "Fossil Remnants",
+    "Gene Bank",
+    "Geological Samples",
+    "Guardian Casket",
+    "Guardian Orb",
+    "Guardian Relic",
+    "Guardian Tablet",
+    "Guardian Totem",
+    "Guardian Urn",
+    "Hostage",
+    "Large Survey Data Cache",
+    "Military Intelligence",
+    "Military Plans",
+    "Mollusc Brain Tissue",
+    "Mollusc Fluid",
+    "Mollusc Membrane",
+    "Mollusc Mycelium",
+    "Mollusc Soft Tissue",
+    "Mollusc Spores",
+    "Mysterious Idol",
+    "Occupied Escape Pod",
+    "Personal Effects",
+    "Pod Core Tissue",
+    "Pod Dead Tissue",
+    "Pod Mesoglea",
+    "Pod Outer Tissue",
+    "Pod Shell Tissue",
+    "Pod Surface Tissue",
+    "Pod Tissue",
+    "Political Prisoner",
+    "Precious Gems",
+    "Prohibited Research Materials",
+    "Prototype Tech",
+    "Rare Artwork",
+    "Rebel Transmissions",
+    "SAP 8 Core Container",
+    "Scientific Research",
+    "Scientific Samples",
+    "Small Survey Data Cache",
+    "Space Pioneer Relics",
+    "Tactical Data",
+    "Technical Blueprints",
+    "Thargoid Basilisk Tissue Sample",
+    "Thargoid Biological Matter",
+    "Thargoid Bio-Storage Capsule",
+    "Thargoid Cyclops Tissue Sample",
+    "Thargoid Glaive Tissue Sample",
+    "Thargoid Heart",
+    "Thargoid Hydra Tissue Sample",
+    "Thargoid Link",
+    "Thargoid Orthrus Tissue Sample",
+    "Thargoid Probe",
+    "Thargoid Resin",
+    "Thargoid Sensor",
+    "Thargoid Medusa Tissue Sample",
+    "Thargoid Scout Tissue Sample",
+    "Thargoid Technology Samples",
+    "Time Capsule",
+    "Titan Deep Tissue Sample",
+    "Titan Maw Deep Tissue Sample",
+    "Titan Maw Partial Tissue Sample",
+    "Titan Maw Tissue Sample",
+    "Titan Partial Tissue Sample",
+    "Titan Tissue Sample",
+    "Trade Data",
+    "Trinkets of Hidden Fortune",
+    "Unclassified Relic",
+    "Unoccupied Escape Pod",
+    "Unstable Data Core",
+    "Wreckage Components",
+    "Imperial Slaves",
+    "Slaves",
+    "Advanced Catalysers",
+    "Animal Monitors",
+    "Aquaponic Systems",
+    "Auto Fabricators",
+    "Bioreducing Lichen",
+    "Computer Components",
+    "H.E. Suits",
+    "Hardware Diagnostic Sensor",
+    "Ion Distributor",
+    "Land Enrichment Systems",
+    "Medical Diagnostic Equipment",
+    "Micro Controllers",
+    "Muon Imager",
+    "Nanobreakers",
+    "Resonating Separators",
+    "Robotics",
+    "Structural Regulators",
+    "Telemetry Suite",
+    "Conductive Fabrics",
+    "Leather",
+    "Military Grade Fabrics",
+    "Natural Fabrics",
+    "Synthetic Fabrics",
+    "Biowaste",
+    "Chemical Waste",
+    "Scrap",
+    "Toxic Waste",
+    "Battle Weapons",
+    "Landmines",
+    "Non-Lethal Weapons",
+    "Personal Weapons",
+    "Reactive Armour",
+    "Terrain Enrichment Systems",
+    "Steel"
+]
+cargo_file = os.path.join(journal_folder, "Cargo.json")
+try:
+    with open(cargo_file, "r") as cargo:
+        cargo_data = json.load(cargo)
+        current_cargo_list = cargo_data.get("Inventory", [])
+        current_cargo_data = {item['Name']: item['Count'] for item in current_cargo_list}
+except json.JSONDecodeError:
+    print(f"Json decode error")
+updated_cargo = current_cargo_data
+file_detected = True
+docked_at_construction = False
+opened_json = False
+ship_docked = False
+switched = False
+input_started = False
+initialized = False
+just_started = True
+try:
+    with open(journal_file_path) as f:
+        f.seek(0, os.SEEK_END)
+        while True:
+            lines = f.readlines()
+            if not lines and just_started == False and app_mode != "1":
+                time.sleep(0.1)
+                continue
+            if app_mode == "3":
+                just_started = False
+                if input_started == False:
+                    input_started = True
+                log_mode()
+            elif app_mode == "2":
+                just_started = False
+                tracking_mode()
+            elif app_mode == "1":
+                just_started = False
+                colonisation_tracker()
+                time.sleep(0.3)
+except json.JSONDecodeError:
+    print(f"Json decode error")
+            
+            
