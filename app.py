@@ -392,6 +392,8 @@ def tracking_mode():
             value = value.strip()
             key = key.replace(" ", "")
             key = re.sub(r'[^a-zA-Z0-9]', '', key)
+            if key == "LandEnrichmentSystems":
+                key = "terrainenrichmentsystems"
             initial_list[key.lower()] = int(value)
             #initial_list[key] = int(value)
         formatted_list = json.dumps(initial_list, indent=4)
@@ -520,7 +522,7 @@ def create_progress_tracking():
             key = key.strip()
             value = value.strip()
             key = key.replace(" ", "")
-            if key == "landenrichmentsystems":
+            if key == "LandEnrichmentSystems":
                 key = "terrainenrichmentsystems"
             progress_list[key.lower()] = int(value)
         formatted_list = json.dumps(progress_list, indent=4)
@@ -982,7 +984,9 @@ else:
         "Landmines",
         "Non-Lethal Weapons",
         "Personal Weapons",
-        "Reactive Armour"
+        "Reactive Armour",
+        "Terrain Enrichment Systems",
+        "Steel"
     ]
     cargo_file = os.path.join(journal_folder, "Cargo.json")
     try:
