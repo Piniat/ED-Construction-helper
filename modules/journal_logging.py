@@ -4,10 +4,8 @@ import ndjson
 
 def log_mode():
     if state.input_started == False:
-        print("attempting to start input")
         start_input.start_user_input()
         state.input_started = True
-        print("Logging active!")
     for line in state.lines:
                 try:
                     curr_event = ndjson.loads(line.strip())
