@@ -3,9 +3,12 @@ import os
 import sys
 import time
 import configparser
+import app
+from modules import state
 
 def start_app():
-    os.system("python app.py")
+    #os.system("python app.py")
+    app.start()
 
 def create_autoupdate_file():
     file = open("auto_update.txt", 'w')
@@ -44,7 +47,6 @@ def request_version():
         if last_release != CURRENT_VERSION:
             print(f"A new update has released: {last_release}. Please go to https://github.com/Piniat/ED-Construction-helper/releases to download the latest release")
             input("Press enter to continue to app")
-            update_version()
             start_app()
         elif last_release == CURRENT_VERSION:
             print("Version is up to date. Starting app...")
@@ -76,12 +78,10 @@ def request_version():
             time.sleep(0.4)
             start_app()
 
-
 global CURRENT_VERSION
-global last_release
 global REPO
 global tries
-CURRENT_VERSION = "0.6.0-alpha"
+CURRENT_VERSION = "0.6.0-beta"
 missing_auto_update = False
 missing_version = False
 missing_journal = False
@@ -108,7 +108,7 @@ if not config.has_section("Version"):
 if not config.has_section("JOURNAL_PATH"):
     missing_journal = True
 if missing_version:
-    config['Version'] = {'version': last_release}
+    config['Version'] = {'version': CURRENT_VERSION}
 if missing_journal:
     path = input("Input game journal file path without quotes:  \n")
     config['JOURNAL_PATH'] = {'path': path}
@@ -121,9 +121,9 @@ CURRENT_VERSION = config['Version']['version']
 AUTO_UPDATE = config["AUTO_UPDATE"]["value"]
 if AUTO_UPDATE == "True":
     if CURRENT_VERSION == None:
-        print("Error. Version number not found. Falling back to 0.0.0")
-        CURRENT_VERSION = "0.0.0"
+        print("Error. Version number not found.")
         request_version()
+        update_version()
     else:
         request_version()
 elif AUTO_UPDATE == "False":
