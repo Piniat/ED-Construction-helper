@@ -288,13 +288,6 @@ def start():
             current_cargo_data = {item['Name']: item['Count'] for item in current_cargo_list}
     except json.JSONDecodeError:
         print(f"Json decode error")
-    state.input_started = current_cargo_data
-    state.docked_at_construction = False
-    state.ship_docked = False
-    state.switched = False
-    state.input_started = False
-    state.initialized = False
-    state.just_started = True
     try:
         with open(journal_file_path) as f:
             f.seek(0, os.SEEK_END)
@@ -305,8 +298,6 @@ def start():
                     continue
                 if state.app_mode == "3":
                     state.just_started = False
-                    if state.input_started == False:
-                        state.input_started = True
                     journal_logging.log_mode()
                 elif state.app_mode == "2":
                     state.just_started = False
