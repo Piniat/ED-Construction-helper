@@ -28,7 +28,7 @@ pip install -r requirements
 ## Usage
 Launch using the execuatable file in the packaged release or if you cloned the repo:
 ```
-python app.py
+python __main__.py
 ```
 When first launching the app will ask for the game journal file location and exit. The journal location is stored in config.ini, should the event tracking not work or any errors occur delete that file and retry.
 <br>
