@@ -3,3 +3,4 @@ config.ini
 Construction_progress.json
 auto_update.txt
 version.txt
+__pycache__
