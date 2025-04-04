@@ -81,7 +81,7 @@ global CURRENT_VERSION
 global last_release
 global REPO
 global tries
-CURRENT_VERSION = "0.5.0-alpha"
+CURRENT_VERSION = "0.6.0-alpha"
 missing_auto_update = False
 missing_version = False
 missing_journal = False

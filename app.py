@@ -768,7 +768,7 @@ def print_construction_progress():
                 print(f"Error reading cargo file: {e}")
 
 clear_screen()
-print('ED Construction helper v0.5.0-beta \n Type "help" for a list of commands')
+print('ED Construction helper v0.6.0-beta \n Type "help" for a list of commands')
 config = configparser.ConfigParser()
 config.read('config.ini')
 config.sections()
