@@ -4,10 +4,9 @@ import sys
 import time
 import configparser
 import app
-from modules import state
+from modules import state, updater
 
 def start_app():
-    #os.system("python app.py")
     app.start()
 
 def create_autoupdate_file():
@@ -22,33 +21,41 @@ def create_autoupdate_file():
     python = sys.executable
     os.execv(python, [python] + sys.argv)
 
-def update_version():
-    global last_release
+def update_version_file():
+    print("Updating config.ini with new version...")
     config = configparser.ConfigParser()
     config.read("config.ini")
     auto_update = config["AUTO_UPDATE"]["value"]
     journal_folder = config['JOURNAL_PATH']['path']
     config['JOURNAL_PATH'] = {'path': journal_folder}
     config['AUTO_UPDATE'] = {'value': auto_update}
-    config['Version'] = {'version': last_release}
+    config['Version'] = {'version': CURRENT_VERSION}
     with open('config.ini', 'w') as configfile:
         config.write(configfile)
 
 def request_version():
-    global REPO
-    global last_release
     global CURRENT_VERSION
-    version_request = requests.get(REPO)
+    version_request = requests.get(state.REPO)
     api_request_status = version_request.status_code
     if api_request_status == 200:
         print("Api request successful")
         parsed_request = version_request.json()
-        last_release = parsed_request.get("tag_name")
-        if last_release != CURRENT_VERSION:
-            print(f"A new update has released: {last_release}. Please go to https://github.com/Piniat/ED-Construction-helper/releases to download the latest release")
-            input("Press enter to continue to app")
-            start_app()
-        elif last_release == CURRENT_VERSION:
+        state.last_release = parsed_request.get("tag_name")
+        if state.last_release != CURRENT_VERSION:
+            #print(f"A new update has released: {state.last_release}. Please go to https://github.com/Piniat/ED-Construction-helper/releases to download the latest release")
+            update_consent = input("Update found. Do you want to download it? y/n \n>")
+            if update_consent == "y":
+                updater.update()
+                print("Update complete. Please restart the app...")
+                time.sleep(1)
+                app.exit_app
+            elif update_consent == "n":
+                input("Press enter to continue to app")
+                start_app()
+            else:
+                print("invalid option. starting app...")
+                start_app()
+        elif state.last_release == CURRENT_VERSION:
             print("Version is up to date. Starting app...")
             time.sleep(0.4)
             start_app()
@@ -79,15 +86,14 @@ def request_version():
             start_app()
 
 global CURRENT_VERSION
-global REPO
 global tries
-CURRENT_VERSION = "0.6.0-beta"
+CURRENT_VERSION = "v0.7.0-beta"
+state.current_version = CURRENT_VERSION
+global Stored_version
 missing_auto_update = False
 missing_version = False
 missing_journal = False
 tries = 0
-VERSION_FILE = "version.txt"
-REPO = "https://api.github.com/repos/Piniat/ED-Construction-helper/releases/latest"
 if not os.path.isfile('config.ini'):
     path = input("Input game journal file path without quotes:  \n")
     config = configparser.ConfigParser()
@@ -117,13 +123,17 @@ if missing_auto_update:
 if missing_auto_update or missing_journal or missing_version:
     with open('config.ini', 'w') as configfile:
         config.write(configfile)
-CURRENT_VERSION = config['Version']['version']
+Stored_version = config['Version']['version']
+if Stored_version != CURRENT_VERSION:
+    update_version_file()
+else:
+    CURRENT_VERSION = config['Version']['version']
 AUTO_UPDATE = config["AUTO_UPDATE"]["value"]
 if AUTO_UPDATE == "True":
     if CURRENT_VERSION == None:
         print("Error. Version number not found.")
         request_version()
-        update_version()
+        update_version_file()
     else:
         request_version()
 elif AUTO_UPDATE == "False":
