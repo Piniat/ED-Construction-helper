@@ -90,8 +90,8 @@ def colonisation_tracker():
                     #loops through every time to find which one/s have been only partially removed from cargo.json
                     for state.item_name, item_count in current_cargo_data.items():
                         if state.docked_at_construction:
-                            if item_count < state.input_started.get(state.switched, 0):
-                                state.delivered_amount = state.input_started[state.switched] - item_count
+                            if item_count < state.updated_cargo.get(state.item_name, 0):
+                                state.delivered_amount = state.updated_cargo[state.item_name] - item_count
                                 #appends items names and amounts to a list used to update progress and to display
                                 state.item_name_list.append(state.item_name)
                                 state.item_count_list.append(state.delivered_amount)
