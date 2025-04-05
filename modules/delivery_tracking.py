@@ -77,8 +77,8 @@ def colonisation_tracker():
                                         progress_data = json.load(progress_file)
                                 else:
                                     progress_data = {}
-                                if state.switched in progress_data:
-                                    progress_data[state.switched] = progress_data[state.switched] - state.delivered_amount
+                                if state.item_name in progress_data:
+                                    progress_data[state.item_name] = progress_data[state.item_name] - state.delivered_amount
                                 else:
                                     print("Item not found in progress list. Did you spell it correctly?")
                                 # Write updated progress to file
