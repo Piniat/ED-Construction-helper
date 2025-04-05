@@ -5,6 +5,7 @@ import time
 import configparser
 import app
 from modules import state, updater
+from prompt_toolkit import prompt
 
 def start_app():
     app.start()
@@ -43,14 +44,14 @@ def request_version():
         state.last_release = parsed_request.get("tag_name")
         if state.last_release != CURRENT_VERSION:
             #print(f"A new update has released: {state.last_release}. Please go to https://github.com/Piniat/ED-Construction-helper/releases to download the latest release")
-            update_consent = input("Update found. Do you want to download it? y/n \n>")
+            update_consent = prompt("Update found. Do you want to download it? y/n \n>")
             if update_consent == "y":
                 updater.update()
                 print("Update complete. Please restart the app...")
                 time.sleep(1)
                 app.exit_app
             elif update_consent == "n":
-                input("Press enter to continue to app")
+                print("Skipping update...")
                 start_app()
             else:
                 print("invalid option. starting app...")
