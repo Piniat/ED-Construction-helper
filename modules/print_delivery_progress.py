@@ -22,12 +22,12 @@ def print_construction_progress():
                         print(f"    {item.capitalize()}: {count}")
                 elif count < 0:
                     if item == "terrainenrichmentsystems":
-                        print(f"    Landenrichmentsystems: {count} - Landenrichmentsystems")
+                        print(f"    ✔!  Landenrichmentsystems: {count} - Landenrichmentsystems")
                     else:
                         print(f"    ✔!  {item.capitalize()}: {count} - Overdelivered! Did someone else help deliver?")
                 elif count == 0:
                     if item == "terrainenrichmentsystems":
-                        print(f"    Landenrichmentsystems: {count} - Landenrichmentsystems")
+                        print(f"    ✔  Landenrichmentsystems: {count} - Landenrichmentsystems")
                     else:
                         print(f"    ✔  {item.capitalize()}: {count}")
         print("\n" + "-" * 60)
