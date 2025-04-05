@@ -66,10 +66,17 @@ def tracking_mode():
                                 ed_timestamp=timestamp
                                 state.formatted_timestamp = elite_timestamp.convert_timestamp(ed_timestamp)
                                 curr_material = state.event.get('Type')
+                                try:
+                                    localised_curr_material = str(state.event.get("Name_Localised")).strip().lower().replace(" ", "")
+                                    localised_curr_material = re.sub(r'[^a-zA-Z0-9]', '', localised_curr_material)
+                                except:
+                                    continue
                                 subtract = state.event.get('Count')
-                                if state.event.get('Type') not in initial_list:
+                                if state.event.get('Type') not in initial_list or localised_curr_material not in initial_list:
                                     print("Error, item not on list. Did you spell it correctly?")
                                 else:
+                                    if state.event.get('Type') not in initial_list:
+                                         curr_material = localised_curr_material
                                     saved_old_amount = int(initial_list.get(curr_material))
                                     new_amount = saved_old_amount - subtract
                                     with open('progress.json', 'w') as updateprogressfile:
