@@ -1,4 +1,4 @@
-from . import exit_app, edit_delivery_progress, edit_shopping_list
+from . import exit_app, edit_delivery_progress, edit_shopping_list, state
 from prompt_toolkit import prompt
 from prompt_toolkit.cursor_shapes import CursorShape
 from prompt_toolkit.patch_stdout import patch_stdout
@@ -15,7 +15,6 @@ style = Style.from_dict({
 })
 
 def user_input():
-    from modules import state
     command_list = WordCompleter(["help", "app-mode-1", "app-mode-2", "app-mode-3", "override-docked", "override-docked-construction", "edit-shopping-list", "edit-construction-progress", "edit-ship-cargo", "exit", "reset-progress"], ignore_case=True)
     while True:
         with patch_stdout():
@@ -43,11 +42,11 @@ def user_input():
                 print("Switched to journal logging mode")
             elif usr_input == "override-docked":
                 print("Current status: ", state.ship_docked)
-                state = prompt("Are you docked? y/n \n> ")
-                if state == "y":
+                status = prompt("Are you docked? y/n \n> ")
+                if status == "y":
                     state.ship_docked = True
                     print("Current status: ", state.ship_docked)
-                elif state == "n":
+                elif status == "n":
                     state.ship_docked == False
                     print("Current status: ", state.ship_docked)
                 else:
