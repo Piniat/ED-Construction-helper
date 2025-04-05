@@ -3,6 +3,7 @@ from prompt_toolkit import prompt
 from prompt_toolkit.cursor_shapes import CursorShape
 import shutil
 import json
+import re
 from modules import state
 
 def create_progress_tracking():
@@ -20,6 +21,7 @@ def create_progress_tracking():
             key = key.strip()
             value = value.strip()
             key = key.replace(" ", "")
+            key = re.sub(r'[^a-zA-Z0-9]', '', key)
             if key == "LandEnrichmentSystems":
                 key = "terrainenrichmentsystems"
             progress_list[key.lower()] = int(value)
