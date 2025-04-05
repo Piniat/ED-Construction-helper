@@ -62,14 +62,13 @@ def colonisation_tracker():
                 #extracts cargo data
                 current_cargo_list = cargo_data.get("Inventory", [])
                 current_cargo_data = {item['Name']: item['Count'] for item in current_cargo_list}
-                if current_cargo_data != state.input_started:
-                    print("Cargo change detected")
+                if current_cargo_data != state.updated_cargo:
                     #loops through every time to find which one/s have been fully removed from cargo.json
-                    for state.item_name in list(state.input_started.keys()):
+                    for state.item_name in list(state.updated_cargo.keys()):
                         if state.item_name not in current_cargo_data and state.docked_at_construction:
                             #appends items names and amounts to a list used to update progress and to display
-                            state.item_name_list.append(state.switched)
-                            state.delivered_amount = state.input_started[state.switched]
+                            state.item_name_list.append(state.item_name)
+                            state.delivered_amount = state.updated_cargo[state.item_name]
                             state.item_count_list.append(state.delivered_amount)
                             #attempts to updated progress file
                             try:
@@ -89,12 +88,12 @@ def colonisation_tracker():
                             except (json.JSONDecodeError, FileNotFoundError) as e:
                                 print(f"Error updating Construction_progress.json: {e}")
                     #loops through every time to find which one/s have been only partially removed from cargo.json
-                    for state.switched, item_count in current_cargo_data.items():
+                    for state.item_name, item_count in current_cargo_data.items():
                         if state.docked_at_construction:
                             if item_count < state.input_started.get(state.switched, 0):
                                 state.delivered_amount = state.input_started[state.switched] - item_count
                                 #appends items names and amounts to a list used to update progress and to display
-                                state.state.switched_list.append(state.item_name)
+                                state.item_name_list.append(state.item_name)
                                 state.item_count_list.append(state.delivered_amount)
                                 # attempts to update Construction_progress.json
                                 try:
@@ -114,14 +113,14 @@ def colonisation_tracker():
                                     print(f"Error updating Construction_progress.json: {e}")
                         #just displays amounts of commodities bought/transferred or stored. Serves no other function
                         elif state.ship_docked and not state.docked_at_construction:
-                            if state.item_name not in state.input_started:
+                            if state.item_name not in state.updated_cargo:
                                 print(f"New cargo detected. Bought/transferred: {state.item_name} - {item_count} tonnes")
-                            elif item_count > state.input_started.get(state.item_name, 0):
-                                print(f"Bought/transferred {state.item_name}: {item_count - state.input_started[state.item_name]} tonnes")
-                            elif item_count < state.input_started.get(state.item_name, item_count):
-                                print(f"Stored: {state.input_started[state.item_name] - item_count} tonnes of {state.item_name}")     
+                            if item_count > state.updated_cargo.get(state.item_name, 0):
+                                print(f"Bought/transferred {state.item_name}: {item_count - state.updated_cargo.get(state.item_name, 0)} tonnes")
+                            if item_count < state.updated_cargo.get(state.item_name, item_count):
+                                print(f"Stored: {state.updated_cargo[state.item_name] - item_count} tonnes of {state.item_name}")     
                     #updates cargo data
-                    state.input_started = current_cargo_data
+                    state.updated_cargo = current_cargo_data
         except (json.JSONDecodeError, FileNotFoundError) as e:
             print(f"Error reading cargo file: {e}")
         if ready_to_print == True:
