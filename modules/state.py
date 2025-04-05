@@ -23,3 +23,4 @@ current_version = None
 update_attempts = 0
 last_release = None
 user_os = None
+item_count = 0
