@@ -43,7 +43,7 @@ def print_construction_progress():
                 loops += 1
             state.item_name_list.clear()
             state.item_count_list.clear()
-            state.alt_item_name_list.clear()
+            #state.alt_item_name_list.clear()
             loops = 0 
     except (json.JSONDecodeError, FileNotFoundError) as e:
                 print(f"Error reading cargo file: {e}")
