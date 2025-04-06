@@ -81,4 +81,4 @@ def update():
     if platform == 'linux':
         os.chmod(executable, 0o755)
     subprocess.Popen([executable], close_fds=True)
-    sys.exit()
+    os._exit(0)
