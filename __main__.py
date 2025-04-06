@@ -93,7 +93,7 @@ def request_version():
 
 global CURRENT_VERSION
 global tries
-CURRENT_VERSION = "v0.7.0-beta"
+CURRENT_VERSION = "v0.7.0-rc1"
 state.current_version = CURRENT_VERSION
 global Stored_version
 missing_auto_update = False
