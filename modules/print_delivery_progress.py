@@ -37,12 +37,13 @@ def print_construction_progress():
         print("\n" + "-" * 60)
         if state.docked_at_construction:
             for item in state.item_name_list:
-                if state.item_name_list[loops] == "terrainenrichmentsystems":
-                    print(f"Delivered {state.item_count_list[loops]} of Landenrichmentsystems")
+                #if state.item_name_list[loops] == "terrainenrichmentsystems":
+                #    print(f"Delivered {state.item_count_list[loops]} of Landenrichmentsystems")
                 print(f"Delivered {state.item_count_list[loops]} of {state.item_name_list[loops]}")
                 loops += 1
             state.item_name_list.clear()
             state.item_count_list.clear()
+            state.alt_item_name_list.clear()
             loops = 0 
     except (json.JSONDecodeError, FileNotFoundError) as e:
                 print(f"Error reading cargo file: {e}")

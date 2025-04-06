@@ -36,7 +36,12 @@ def update_version_file():
 
 def request_version():
     global CURRENT_VERSION
-    version_request = requests.get(state.REPO)
+    try:
+        version_request = requests.get(state.REPO, timeout=4)
+    except:
+        print("Connection timeout. Skipping...")
+        time.sleep(0.5)
+        start_app()
     api_request_status = version_request.status_code
     if api_request_status == 200:
         print("Api request successful")

@@ -21,8 +21,8 @@ def tracking_mode():
             value = value.strip()
             key = key.replace(" ", "")
             key = re.sub(r'[^a-zA-Z0-9]', '', key)
-            if key == "LandEnrichmentSystems":
-                key = "terrainenrichmentsystems"
+            #if key == "LandEnrichmentSystems":
+            #    key = "terrainenrichmentsystems"
             initial_list[key.lower()] = int(value)
         formatted_list = json.dumps(initial_list, indent=4)
         copy_over = prompt("Would you like to copy the list to Construction_progress.json for delivery tracking later? y/n\n> ")
@@ -67,12 +67,12 @@ def tracking_mode():
                                 state.formatted_timestamp = elite_timestamp.convert_timestamp(ed_timestamp)
                                 curr_material = state.event.get('Type')
                                 try:
-                                    localised_curr_material = str(state.event.get("Name_Localised")).strip().lower().replace(" ", "")
+                                    localised_curr_material = str(state.event.get("Type_Localised")).strip().lower().replace(" ", "")
                                     localised_curr_material = re.sub(r'[^a-zA-Z0-9]', '', localised_curr_material)
                                 except:
                                     continue
                                 subtract = state.event.get('Count')
-                                if state.event.get('Type') not in initial_list or localised_curr_material not in initial_list:
+                                if (state.event.get('Type') not in initial_list) and (localised_curr_material not in initial_list):
                                     print("Error, item not on list. Did you spell it correctly?")
                                 else:
                                     if state.event.get('Type') not in initial_list:

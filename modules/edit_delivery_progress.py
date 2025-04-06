@@ -26,6 +26,7 @@ def edit_colonisation_progress():
                 key = prompt("Commodity name in all lower case and no spaces: \n", completer=complete, complete_while_typing=True, complete_in_thread=True)
                 key = key.strip()
                 key = key.replace(" ", "")
+                key = key.lower()
                 key = re.sub(r'[^a-zA-Z0-9]', '', key)
                 if key in loaded_list:
                     del loaded_list[key]

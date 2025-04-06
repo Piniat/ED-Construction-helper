@@ -11,6 +11,7 @@ def print_list():
     timestamp = generate_time_timestamp.generate_one_time_timestamp()
     clean_screen.clear_screen()
     print("\n" + "-" * 60)
+    #print("this is the intended timestamp in print_shopping_list")
     print(f"Timestamp: {timestamp}")
     print("\n" + "-" * 60)
     print("Materials:")
