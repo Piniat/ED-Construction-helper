@@ -3,7 +3,7 @@ import time
 import glob
 import configparser
 import json
-from modules import state, journal_logging, delivery_tracking, exit_app, select_app_mode, shopping_list, clean_screen
+from modules import state, journal_logging, exit_app, select_app_mode, shopping_list, clean_screen, del_tracking_again
 
 def get_latest_journal():
     latest_file = glob.glob(os.path.join(state.journal_folder, 'Journal.*.log'))
@@ -14,7 +14,7 @@ def get_latest_journal():
 
 def start():
     clean_screen.clear_screen()
-    print('ED Construction helper v0.7.0-beta \n Type "help" for a list of commands')
+    print(f'ED Construction helper {state.current_version} \n Type "help" for a list of commands')
     config = configparser.ConfigParser()
     config.read('config.ini')
     config.sections()
@@ -56,7 +56,7 @@ def start():
                     shopping_list.tracking_mode()
                 elif state.app_mode == "1":
                     state.just_started = False
-                    delivery_tracking.colonisation_tracker()
+                    del_tracking_again.colonisation_tracker()
                     time.sleep(0.3)
     except json.JSONDecodeError:
         print(f"Json decode error")
