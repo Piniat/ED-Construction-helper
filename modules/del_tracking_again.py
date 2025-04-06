@@ -1,4 +1,4 @@
-from modules import state, clean_screen, print_delivery_progress, create_delivery_tracking, event_handler, start_input
+from modules import state, clean_screen, print_delivery_progress, create_delivery_tracking, event_handler, start_input, ship_cargo_ask
 import os
 import json
 import ndjson
@@ -12,7 +12,7 @@ def colonisation_tracker():
     #initial setup for tracking
     if state.initialized == False or state.switched == True:
         clean_screen.clear_screen()
-        state.ship_cargo_space = int(prompt("Type the cargo capacity of your ship:\n> ", cursor=CursorShape.BLINKING_BLOCK))
+        ship_cargo_ask.request_ship_cargo()
         state.item_name_list = []
         state.item_count_list = []
         state.delivered_amount = 0

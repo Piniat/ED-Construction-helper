@@ -1,4 +1,4 @@
-from . import exit_app, edit_delivery_progress, edit_shopping_list, state
+from . import exit_app, edit_delivery_progress, edit_shopping_list, state, ship_cargo_ask
 from prompt_toolkit import prompt
 from prompt_toolkit.cursor_shapes import CursorShape
 from prompt_toolkit.patch_stdout import patch_stdout
@@ -67,7 +67,7 @@ def user_input():
             elif usr_input == "edit-construction-progress":
                     edit_delivery_progress.edit_colonisation_progress()
             elif usr_input == "edit-ship-cargo":
-                state.ship_cargo_space = int(prompt("How much cargo space does your ship have? \n> "))
+                ship_cargo_ask.request_ship_cargo()
                 print("Updated ship cargo space")
             elif usr_input == "reset-progress":
                 autocomplete = WordCompleter(["Shopping", "Delivery", "both"], ignore_case=True)
