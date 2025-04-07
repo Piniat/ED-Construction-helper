@@ -33,7 +33,7 @@ def colonisation_tracker():
     for line in state.lines:
         try:
             curr_event = ndjson.loads(line.strip())
-            for event in curr_event:
+            for state.event in curr_event:
                 if state.event.get('event') == "Docked":
                     print("Docked at a station")
                     state.ship_docked = True
