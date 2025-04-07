@@ -11,6 +11,7 @@ The app can currently:<br>
   <li>Create a shopping/delivery list</li>
   <li>Removing shopping/delivery list</li>
   <li>Print out events in a live journal monitoring mode (mostly a debug feature)</li>
+  <li>Automatically detect updates, download and install them</li>
 </ul>
 <br>
 The app has a simple TUI (Text-based user interface) featuring autocomplete to help avoid typos.<br>
@@ -32,7 +33,11 @@ python __main__.py
 ```
 When first launching the app will ask for the game journal file location and exit. The journal location is stored in config.ini, should the event tracking not work or any errors occur delete that file and retry.
 <br>
+<br>
 When first choosing the shopping or construction delivery list mode you will ne asked to input how many items you need to buy, after which you will be asked to input the name and quantity of each item.
+<br>
+<br>
+Updates can be disabled by editing config.ini and setting the value of [AUTO_UPDATE] to false
 ## Commands
 The app uses commands to function. These consist of:
 <ul>
