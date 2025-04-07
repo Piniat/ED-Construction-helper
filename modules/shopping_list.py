@@ -40,7 +40,7 @@ def tracking_mode():
             state.initialized = True
         else:
             print("Error. Incorrect option. Defaulting to no")
-    elif state.initialized == False or state.switched is True:
+    elif (state.initialized == False) or (state.switched == True):
         with open('progress.json', 'r') as openfile:
             initial_list = json.load(openfile)
             formatted_list = json.dumps(initial_list, indent=4)
