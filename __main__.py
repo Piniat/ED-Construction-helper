@@ -109,7 +109,7 @@ def request_version():
 global CURRENT_VERSION
 global tries
 global updater_version
-CURRENT_VERSION = "v0.7.0-rc1-dev"
+CURRENT_VERSION = "v0.7.0-rc2"
 updater_version = "v0.1.0-updater"
 state.current_version = CURRENT_VERSION
 global Stored_version
