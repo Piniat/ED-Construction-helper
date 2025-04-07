@@ -32,20 +32,20 @@ def start():
     select_app_mode.app_mode_selection()
     state.ship_cargo_space = 0
     #nice list down there huh?
-    cargo_file = os.path.join(state.journal_folder, "Cargo.json")
-    try:
-        with open(cargo_file, "r") as cargo:
-            cargo_data = json.load(cargo)
-            current_cargo_list = cargo_data.get("Inventory", [])
-            current_cargo_data = {item['Name']: item['Count'] for item in current_cargo_list}
-    except json.JSONDecodeError:
-        print(f"Json decode error")
+    #cargo_file = os.path.join(state.journal_folder, "Cargo.json")
+    #try:
+    #    with open(cargo_file, "r") as cargo:
+    #        cargo_data = json.load(cargo)
+    #        current_cargo_list = cargo_data.get("Inventory", [])
+    #        current_cargo_data = {item['Name']: item['Count'] for item in current_cargo_list}
+    #except json.JSONDecodeError:
+    #    print(f"Json decode error")
     try:
         with open(journal_file_path) as f:
             f.seek(0, os.SEEK_END)
             while True:
                 state.lines = f.readlines()
-                if not state.lines and state.just_started == False and state.app_mode != "1":
+                if not state.lines and state.just_started == False and state.app_mode != "1" and state.switched != True:
                     time.sleep(0.1)
                     continue
                 if state.app_mode == "3":
