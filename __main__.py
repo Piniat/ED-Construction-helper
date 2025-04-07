@@ -48,7 +48,7 @@ def request_version():
         print("Api request successful")
         parsed_request = version_request.json()
         state.last_release = parsed_request.get("tag_name")
-        if (state.last_release != CURRENT_VERSION) or (state.last_release != updater_version):
+        if (state.last_release != CURRENT_VERSION) and (state.last_release != updater_version):
             if "updater "not in state.last_release:
             #print(f"A new update has released: {state.last_release}. Please go to https://github.com/Piniat/ED-Construction-helper/releases to download the latest release")
                 update_consent = prompt("Update found. Do you want to download it? y/n \n>")
