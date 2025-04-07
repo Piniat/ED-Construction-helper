@@ -36,6 +36,7 @@ def update_version_file():
 
 def request_version():
     global CURRENT_VERSION
+    global updater_version
     try:
         version_request = requests.get(state.REPO, timeout=4)
     except:
@@ -47,20 +48,34 @@ def request_version():
         print("Api request successful")
         parsed_request = version_request.json()
         state.last_release = parsed_request.get("tag_name")
-        if state.last_release != CURRENT_VERSION:
+        if (state.last_release != CURRENT_VERSION) or (state.last_release != updater_version):
+            if "updater "not in state.last_release:
             #print(f"A new update has released: {state.last_release}. Please go to https://github.com/Piniat/ED-Construction-helper/releases to download the latest release")
-            update_consent = prompt("Update found. Do you want to download it? y/n \n>")
-            if update_consent == "y":
-                updater.update()
-                print("Update complete. Please restart the app...")
-                time.sleep(1)
-                app.exit_app
-            elif update_consent == "n":
-                print("Skipping update...")
-                start_app()
+                update_consent = prompt("Update found. Do you want to download it? y/n \n>")
+                if update_consent == "y":
+                    updater.update()
+                    print("Update complete. Please restart the app...")
+                    time.sleep(1)
+                    app.exit_app
+                elif update_consent == "n":
+                    print("Skipping update...")
+                    start_app()
+                else:
+                    print("invalid option. starting app...")
+                    start_app()
             else:
-                print("invalid option. starting app...")
-                start_app()
+                update_consent = prompt("Updater update found. Do you want to download it? y/n \n>")
+                if update_consent == "y":
+                    updater.updater_update()
+                    print("Update complete. Please restart the app...")
+                    time.sleep(1)
+                    app.exit_app
+                elif update_consent == "n":
+                    print("Skipping update...")
+                    start_app()
+                else:
+                    print("invalid option. starting app...")
+                    start_app()
         elif state.last_release == CURRENT_VERSION:
             print("Version is up to date. Starting app...")
             time.sleep(0.4)
@@ -93,7 +108,9 @@ def request_version():
 
 global CURRENT_VERSION
 global tries
-CURRENT_VERSION = "v0.7.0-rc1"
+global updater_version
+CURRENT_VERSION = "v0.7.0-rc1-dev"
+updater_version = "v0.1.0-updater"
 state.current_version = CURRENT_VERSION
 global Stored_version
 missing_auto_update = False

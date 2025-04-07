@@ -1,3 +1,5 @@
+#IMPORTANT!!
+updater_verion = "v0.1.0-updater"
 journal_folder = ""
 ship_docked = False
 docked_at_construction = False
