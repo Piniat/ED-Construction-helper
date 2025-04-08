@@ -1,5 +1,6 @@
 #IMPORTANT!!
 updater_verion = "v0.1.0-updater"
+cargo_read_attempts = 0
 journal_folder = ""
 ship_docked = False
 docked_at_construction = False

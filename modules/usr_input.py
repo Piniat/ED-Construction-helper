@@ -15,7 +15,7 @@ style = Style.from_dict({
 })
 
 def user_input():
-    command_list = WordCompleter(["help", "app-mode-1", "app-mode-2", "app-mode-3", "override-docked", "override-docked-construction", "edit-shopping-list", "edit-construction-progress", "edit-ship-cargo", "exit", "reset-progress"], ignore_case=True)
+    command_list = WordCompleter(["help", "app-mode-1", "app-mode-2", "app-mode-3", "override-docked", "override-docked-construction", "edit-shopping-list", "edit-delivery-progress", "edit-ship-cargo", "exit", "reset-progress", "delivery-tracker", "shopping-list"], ignore_case=True)
     while True:
         with patch_stdout():
             usr_input = prompt("> ", cursor=CursorShape.BLINKING_BLOCK, completer=command_list, complete_while_typing=True, complete_in_thread=True)
@@ -24,13 +24,13 @@ def user_input():
                 time.sleep(1)
                 exit_app.close_app()
             elif usr_input == "help":
-                print("List of commands: \n exit - exits the program \n app-mode-1 - switches to construction progress tracking \n app-mode-2 - switches to app to shopping list mode \n app-mode-3 - switches app to journal monitoring mode \n edit-shopping-list - allows you to edit shopping list in-app \n override-docked - overrides docked status in mode 3 \n override-docked-construction - overrides if you are docked at a constructions site / megaship (any cargo removed from your hold will be counted towards progress to buiding) \n edit-ship-cargo")
-            elif usr_input == "app-mode-1":
+                print("List of commands: \n exit - exits the program \n delivery-tracker - switches to construction delivery tracking \n shopping-list - switches to app to shopping list mode \n app-mode-3 - switches app to journal monitoring mode \n edit-shopping-list - allows you to edit shopping list \n edit-delivery-progress - allows you to edit the delivery progress list, \n reset-progress - deletes shopping list or construction progress allowing you to start from stratch \n override-docked - overrides docked status in mode 3 \n override-docked-construction - overrides if you are docked at a constructions site / megaship (any cargo removed from your hold will be counted towards progress to buiding) \n edit-ship-cargo")
+            elif (usr_input == "app-mode-1") or (usr_input == "delivery-tracker"):
                 state.switched = True
                 state.just_started = False
                 state.app_mode = "1"
                 print("Switched to construction progress tracking.")
-            elif usr_input == "app-mode-2":
+            elif (usr_input == "app-mode-2") or (usr_input == "shopping-list"):
                 state.switched = True
                 state.just_started = False
                 state.app_mode = "2"
@@ -64,7 +64,7 @@ def user_input():
                     print("Error. Please choose y or n")
             elif usr_input == "edit-shopping-list":
                 edit_shopping_list.edit_list()
-            elif usr_input == "edit-construction-progress":
+            elif usr_input == "edit-delivery-progress":
                     edit_delivery_progress.edit_colonisation_progress()
             elif usr_input == "edit-ship-cargo":
                 ship_cargo_ask.request_ship_cargo()

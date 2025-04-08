@@ -32,10 +32,12 @@ def tracking_mode():
         if copy_over == "y":
             with open("Construction_progress.json", "w") as other_outfile:
                 other_outfile.write(formatted_list)
-            ship_cargo_ask.request_ship_cargo()
+            if state.ship_cargo_space == 0:
+                ship_cargo_ask.request_ship_cargo()
             print_shopping_list.print_list()
         elif copy_over == "n":
-            ship_cargo_ask.request_ship_cargo()
+            if state.ship_cargo_space == 0:
+                ship_cargo_ask.request_ship_cargo()
             print_shopping_list.print_list()
             state.initialized = True
         else:
@@ -46,7 +48,8 @@ def tracking_mode():
             formatted_list = json.dumps(initial_list, indent=4)
             clean_screen.clear_screen()
             #state.ship_cargo_space = int(prompt("Type the cargo capacity of your ship:\n> ", cursor=CursorShape.BLINKING_BLOCK))
-            ship_cargo_ask.request_ship_cargo()
+            if state.ship_cargo_space == 0:
+                ship_cargo_ask.request_ship_cargo()
             clean_screen.clear_screen()
             print_shopping_list.print_list()
             state.initialized = True

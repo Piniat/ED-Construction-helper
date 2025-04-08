@@ -1,6 +1,5 @@
 import requests
 import platform
-import stat
 import os
 import time
 from prompt_toolkit.shortcuts import ProgressBar
@@ -11,7 +10,6 @@ def updater_update():
     global user_platform
     global executable
     global executable_name
-    state.updater_verion
     user_platform = platform.system().lower()
     if user_platform == 'windows':
         executable = "updater.exe"

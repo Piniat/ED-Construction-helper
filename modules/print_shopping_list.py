@@ -14,6 +14,8 @@ def print_list():
     #print("this is the intended timestamp in print_shopping_list")
     print(f"Timestamp: {timestamp}")
     print("\n" + "-" * 60)
+    print("Shopping list mode")
+    print("\n" + "-" * 60)
     print("Materials:")
     for material, amount in initial_list.items():
         state.total += amount

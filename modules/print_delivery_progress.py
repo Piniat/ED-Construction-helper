@@ -10,6 +10,8 @@ def print_construction_progress():
     print("\n" + "-" * 60)
     print(f"Timestamp: {timestamp}")
     print("\n" + "-" * 60)
+    print("Delivery tracking mode")
+    print("\n" + "-" * 60)
     try:
         with open('Construction_progress.json', "r") as progress:
             progress_data = json.load(progress)
