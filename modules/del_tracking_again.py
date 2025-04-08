@@ -2,8 +2,6 @@ from modules import state, clean_screen, print_delivery_progress, create_deliver
 import os
 import json
 import ndjson
-from prompt_toolkit import prompt
-from prompt_toolkit.cursor_shapes import CursorShape
 import time
 import re
 
@@ -12,12 +10,13 @@ def colonisation_tracker():
     #initial setup for tracking
     if state.initialized == False or state.switched == True:
         clean_screen.clear_screen()
-        ship_cargo_ask.request_ship_cargo()
+        if state.ship_cargo_space == 0:
+            ship_cargo_ask.request_ship_cargo()
         state.item_name_list = []
         state.item_count_list = []
         state.delivered_amount = 0
         print_delivery_progress.print_construction_progress()
-        print("Helpful comands:\nhelp\noverride-docked\noverride-docked-construction")
+        print("Use the appropriate command if app started while docked:\noverride-docked\noverride-docked-construction")
         state.initialized = True
         state.switched = False
     #checks if progress file exists
@@ -61,6 +60,7 @@ def colonisation_tracker():
                 #print(cargo_data)
                 current_cargo_list = cargo_data.get('Inventory', [])
                 current_cargo_data = {re.sub(r'[^a-zA-Z0-9]', '', item.get('Name_Localised', item.get('Name')).strip().lower().replace(" ", "")): item['Count'] for item in current_cargo_list}
+                state.cargo_read_attempts = 0
                 if state.initialized == False:
                     state.get_updated_cargo = current_cargo_data
                     state.initialized = True
@@ -95,6 +95,14 @@ def colonisation_tracker():
                                         print(f"Error updating Construction_progress.json: {e}")
         except(json.JSONDecodeError, FileNotFoundError) as e:
             print(f"Error reading cargo file: {e}")
+            if state.cargo_read_attempts <= 5:
+                state.cargo_read_attempts += 1
+                print(f"Retrying in 2 seconds... (attempt {state.cargo_read_attempts})")
+                time.sleep(2)
+                colonisation_tracker()
+            else:
+                print("5 retry attempts failed. Aborting....")
+                return
         state.get_updated_cargo = current_cargo_data
         if ready_to_print == True:
             print_delivery_progress.print_construction_progress()
