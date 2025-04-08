@@ -4,7 +4,7 @@ import sys
 import time
 import configparser
 import app
-from modules import state, updater
+from modules import state, updater, first_time_launch, clean_screen
 from prompt_toolkit import prompt
 
 def start_app():
@@ -36,7 +36,6 @@ def update_version_file():
 
 def request_version():
     global CURRENT_VERSION
-    global updater_version
     try:
         version_request = requests.get(state.REPO, timeout=4)
     except:
@@ -48,7 +47,7 @@ def request_version():
         print("Api request successful")
         parsed_request = version_request.json()
         state.last_release = parsed_request.get("tag_name")
-        if (state.last_release != CURRENT_VERSION) and (state.last_release != updater_version):
+        if (state.last_release != CURRENT_VERSION) and (state.last_release != state.updater_verion):
             if "updater "not in state.last_release:
             #print(f"A new update has released: {state.last_release}. Please go to https://github.com/Piniat/ED-Construction-helper/releases to download the latest release")
                 update_consent = prompt("Update found. Do you want to download it? y/n \n>")
@@ -108,14 +107,13 @@ def request_version():
 
 global CURRENT_VERSION
 global tries
-global updater_version
 CURRENT_VERSION = "v0.7.0-rc2"
-updater_version = "v0.1.0-updater"
 state.current_version = CURRENT_VERSION
 global Stored_version
 missing_auto_update = False
 missing_version = False
 missing_journal = False
+missing_first_launch = False
 tries = 0
 if not os.path.isfile('config.ini'):
     path = input("Input game journal file path without quotes:  \n")
@@ -123,6 +121,7 @@ if not os.path.isfile('config.ini'):
     config['JOURNAL_PATH'] = {'path': path}
     config['AUTO_UPDATE'] = {'value': True}
     config['Version'] = {'version': CURRENT_VERSION}
+    config['FIRST_TIME_LAUNCH'] = {'value': True}
     with open('config.ini', 'w') as configfile:
         config.write(configfile)
     print("Config file created.")
@@ -136,6 +135,8 @@ if not config.has_section("Version"):
     missing_version = True
 if not config.has_section("JOURNAL_PATH"):
     missing_journal = True
+if not config.has_section("FIRST_TIME_LAUNCH"):
+    missing_first_launch = True
 if missing_version:
     config['Version'] = {'version': CURRENT_VERSION}
 if missing_journal:
@@ -143,14 +144,22 @@ if missing_journal:
     config['JOURNAL_PATH'] = {'path': path}
 if missing_auto_update:
     config['AUTO_UPDATE'] = {'value': True}
-if missing_auto_update or missing_journal or missing_version:
+if missing_first_launch:
+    config['FIRST_TIME_LAUNCH'] = {'value': True}
+if missing_auto_update or missing_journal or missing_version or missing_first_launch:
     with open('config.ini', 'w') as configfile:
         config.write(configfile)
+        config.read('config.ini')
+        config.sections()
 Stored_version = config['Version']['version']
 if Stored_version != CURRENT_VERSION:
     update_version_file()
 else:
     CURRENT_VERSION = config['Version']['version']
+first_launch = config["FIRST_TIME_LAUNCH"]['value']
+if first_launch == "True":
+    clean_screen.clear_screen()
+    first_time_launch.onboarding()
 AUTO_UPDATE = config["AUTO_UPDATE"]["value"]
 if AUTO_UPDATE == "True":
     if CURRENT_VERSION == None:
