@@ -57,7 +57,6 @@ def colonisation_tracker():
         try:
             with open(cargo_file, "r") as cargo:
                 cargo_data = json.load(cargo)
-                #print(cargo_data)
                 current_cargo_list = cargo_data.get('Inventory', [])
                 current_cargo_data = {re.sub(r'[^a-zA-Z0-9]', '', item.get('Name_Localised', item.get('Name')).strip().lower().replace(" ", "")): item['Count'] for item in current_cargo_list}
                 state.cargo_read_attempts = 0
