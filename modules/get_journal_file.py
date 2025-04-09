@@ -8,11 +8,11 @@ def get_latest_journal():
     while True:
         try:
             time.sleep(8)
-            state.new_journal_file = glob.glob(os.path.join(state.journal_folder, 'Journal.*.log'))
-            if not state.new_journal_file:
+            updated_journal_path = glob.glob(os.path.join(state.journal_folder, 'Journal.*.log'))
+            if not updated_journal_path:
                 print("No journal files found.")
-            if state.new_journal_file != state.journal_file_path:
-                state.new_journal_file = max(state.new_journal_file, key=os.path.getctime)
+            if updated_journal_path != state.journal_file_path:
+                state.new_journal_file = max(updated_journal_path, key=os.path.getctime)
             else:
                 continue
             attempts = 0
