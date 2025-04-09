@@ -85,8 +85,7 @@ def request_version():
         time.sleep(0.3)
         print("Trying again in 10 seconds")
         time.sleep(10)
-        python = sys.executable
-        os.execv(python, [python] + sys.argv)
+        request_version()
     elif api_request_status == 403:
         print("Rate limit detected. Skipping update...")
         time.sleep(0.5)
@@ -107,7 +106,7 @@ def request_version():
 
 global CURRENT_VERSION
 global tries
-CURRENT_VERSION = "v0.7.0-rc2"
+CURRENT_VERSION = "v0.7.0-rc3-dev"
 state.current_version = CURRENT_VERSION
 global Stored_version
 missing_auto_update = False
