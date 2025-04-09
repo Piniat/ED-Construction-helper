@@ -3,13 +3,17 @@ import json
 import ndjson
 
 def log_mode():
+    if state.switched == True or state.initialized == False:
+        clean_screen.clear_screen()
+        print("\n" + "-" * 60)
+        print("Monitoring journal file...")
+        print("\n" + "-" * 60)
+        state.initialized = True
+        state.switched = False
     if state.input_started == False:
         clean_screen.clear_screen()
         start_input.start_user_input()
         state.input_started = True
-        print("\n" + "-" * 60)
-        print("Monitoring journal file...")
-        print("\n" + "-" * 60)
     for line in state.lines:
                 try:
                     curr_event = ndjson.loads(line.strip())
