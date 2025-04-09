@@ -15,6 +15,10 @@ def colonisation_tracker():
         state.item_name_list = []
         state.item_count_list = []
         state.delivered_amount = 0
+        if not os.path.isfile("Construction_progress.json"):
+            with open("Construction_progress.json", "w") as progress_file:
+                create_delivery_tracking.create_progress_tracking()
+                print_delivery_progress.print_construction_progress()
         print_delivery_progress.print_construction_progress()
         print("Use the appropriate command if app started while docked:\noverride-docked\noverride-docked-construction")
         state.initialized = True
