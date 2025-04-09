@@ -15,15 +15,15 @@ def tracking_mode():
         item_amount = int(prompt("How many items do you plan on buying? \n"))
         i = 0
         for i in range(item_amount):
-            key = prompt("Commodity name in all lower case and no spaces: \n", completer=complete, complete_while_typing=True, complete_in_thread=True)
-            value = prompt("Amount needed: \n")
-            key = key.strip()
-            value = value.strip()
-            key = key.replace(" ", "")
+            key = prompt("Commodity name in all lower case and no spaces: \n", completer=complete, complete_while_typing=True, complete_in_thread=True).strip().lower().replace(" ", "")
             key = re.sub(r'[^a-zA-Z0-9]', '', key)
-            #if key == "LandEnrichmentSystems":
-            #    key = "terrainenrichmentsystems"
-            initial_list[key.lower()] = int(value)
+            while True:
+                try:
+                    value = int(prompt("Amount needed: \n"))
+                    break
+                except:
+                    print("Invalid input. Please input the number of commodities you need")
+            initial_list[key] = value
         formatted_list = json.dumps(initial_list, indent=4)
         copy_over = prompt("Would you like to copy the list to Construction_progress.json for delivery tracking later? y/n\n> ")
         with open("progress.json", "w") as outfile:
