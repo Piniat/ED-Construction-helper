@@ -11,7 +11,6 @@ def log_mode():
         state.initialized = True
         state.switched = False
     if state.input_started == False:
-        clean_screen.clear_screen()
         start_input.start_user_input()
         state.input_started = True
     for line in state.lines:
