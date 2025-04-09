@@ -1,11 +1,15 @@
-from . import state, start_input, elite_timestamp, event_handler
+from . import state, start_input, elite_timestamp, event_handler, clean_screen
 import json
 import ndjson
 
 def log_mode():
     if state.input_started == False:
+        clean_screen.clear_screen()
         start_input.start_user_input()
         state.input_started = True
+        print("\n" + "-" * 60)
+        print("Monitoring journal file...")
+        print("\n" + "-" * 60)
     for line in state.lines:
                 try:
                     curr_event = ndjson.loads(line.strip())
