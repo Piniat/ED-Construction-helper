@@ -15,7 +15,8 @@ def create_progress_tracking():
     if state.shopping_list_exists == True:
         copy_progress = prompt("Copy from shopping list? (Progress.json) y/n \n> ", cursor=CursorShape.BLINKING_BLOCK).strip().lower()
     else:
-        copy_progress = "n"
+        print("Invalid input. Please type y or n")
+        create_progress_tracking()
     if copy_progress == "y":
         if os.path.isfile('progress.json'):
             shutil.copyfile('progress.json', 'Construction_progress.json')
@@ -36,6 +37,7 @@ def create_progress_tracking():
                 except:
                     print("Invalid input. Please input the number of commodities you need")
             progress_list[key] = value
+            i += 1
         formatted_list = json.dumps(progress_list, indent=4)
         with open("Construction_progress.json", "w") as outfile:
             outfile.write(formatted_list)
