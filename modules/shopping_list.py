@@ -2,46 +2,57 @@ from modules import state, start_input, clean_screen, elite_timestamp, event_han
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.shortcuts import prompt
+from prompt_toolkit.cursor_shapes import CursorShape
 import re
 import os
 import ndjson
 import json
 import math
+import shutil
 
 def tracking_mode():
     complete = WordCompleter(state.all_comodities, ignore_case=True)
     if not os.path.isfile('progress.json') and state.initialized == False:
-        initial_list = {}
-        item_amount = int(prompt("How many items do you plan on buying? \n"))
-        i = 0
-        for i in range(item_amount):
-            key = prompt("Commodity name in all lower case and no spaces: \n", completer=complete, complete_while_typing=True, complete_in_thread=True).strip().lower().replace(" ", "")
-            key = re.sub(r'[^a-zA-Z0-9]', '', key)
-            while True:
-                try:
-                    value = int(prompt("Amount needed: \n"))
-                    break
-                except:
-                    print("Invalid input. Please input the number of commodities you need")
-            initial_list[key] = value
-        formatted_list = json.dumps(initial_list, indent=4)
-        copy_over = prompt("Would you like to copy the list to Construction_progress.json for delivery tracking later? y/n\n> ")
-        with open("progress.json", "w") as outfile:
-            outfile.write(formatted_list)
-        print("created progress file")
-        if copy_over == "y":
-            with open("Construction_progress.json", "w") as other_outfile:
-                other_outfile.write(formatted_list)
-            if state.ship_cargo_space == 0:
-                ship_cargo_ask.request_ship_cargo()
-            print_shopping_list.print_list()
-        elif copy_over == "n":
-            if state.ship_cargo_space == 0:
-                ship_cargo_ask.request_ship_cargo()
-            print_shopping_list.print_list()
-            state.initialized = True
+        auto_create = prompt("Would you like to automatically copy from the delivery list? y/n \n> ", cursor=CursorShape.BLINKING_BLOCK).strip().lower()
+        if auto_create == "n":
+            initial_list = {}
+            item_amount = int(prompt("How many items do you plan on buying? \n"))
+            i = 0
+            for i in range(item_amount):
+                key = prompt("Commodity name in all lower case and no spaces: \n", completer=complete, complete_while_typing=True, complete_in_thread=True).strip().lower().replace(" ", "")
+                key = re.sub(r'[^a-zA-Z0-9]', '', key)
+                while True:
+                    try:
+                        value = int(prompt("Amount needed: \n"))
+                        break
+                    except:
+                        print("Invalid input. Please input the number of commodities you need")
+                initial_list[key] = value
+                i += 1
+            formatted_list = json.dumps(initial_list, indent=4)
+            copy_over = prompt("Would you like to copy the list to Construction_progress.json for delivery tracking later? y/n\n> ")
+            with open("progress.json", "w") as outfile:
+                outfile.write(formatted_list)
+            print("created progress file")
+            if copy_over == "y":
+                with open("Construction_progress.json", "w") as other_outfile:
+                    other_outfile.write(formatted_list)
+                if state.ship_cargo_space == 0:
+                    ship_cargo_ask.request_ship_cargo()
+                print_shopping_list.print_list()
+            elif copy_over == "n":
+                if state.ship_cargo_space == 0:
+                    ship_cargo_ask.request_ship_cargo()
+                print_shopping_list.print_list()
+                state.initialized = True
+            else:
+                print("Error. Incorrect option. Defaulting to no")
         else:
-            print("Error. Incorrect option. Defaulting to no")
+            if os.path.isfile('Construction_progress.json'):
+                shutil.copyfile('Construction_progress.json', 'progress.json')
+            else:
+                print("Error. File not found. Proceeding with normal creation...")
+                os._exit(0)
     elif (state.initialized == False) or (state.switched == True):
         with open('progress.json', 'r') as openfile:
             initial_list = json.load(openfile)
