@@ -4,7 +4,7 @@ import configparser
 import json
 import threading
 import glob
-from modules import state, journal_logging, exit_app, select_app_mode, shopping_list, clean_screen, del_tracking_again, get_journal_file, error_logger
+from modules import state, journal_logging, exit_app, select_app_mode, shopping_list, clean_screen, del_tracking_again, get_journal_file, error_logger, delivery_tracking
 
 def get_latest_journal():
     latest_file = glob.glob(os.path.join(state.journal_folder, 'Journal.*.log'))
@@ -33,7 +33,8 @@ def main_loop():
                         shopping_list.tracking_mode()
                     elif state.app_mode == "1":
                         state.just_started = False
-                        del_tracking_again.colonisation_tracker()
+                        #del_tracking_again.colonisation_tracker()
+                        delivery_tracking.colonisation_tracker()
                         time.sleep(0.3)
     except json.JSONDecodeError:
         print(f"Json decode error")
