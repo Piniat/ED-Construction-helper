@@ -22,7 +22,7 @@ def main_loop():
                     state.journal_file_path = state.new_journal_file
                     return main_loop()
                 state.lines = f.readlines()
-                if not state.lines and state.just_started == False and state.app_mode != "1" and state.switched != True:
+                if not state.lines and state.just_started == False and state.switched != True:
                     time.sleep(0.5)
                 else:
                     if state.app_mode == "3":
