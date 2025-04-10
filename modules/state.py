@@ -15,6 +15,9 @@ ship_cargo_space = 0
 item_name_list = []
 item_count_list = []
 delivered_amount = []
+ready_to_print = True
+current_amount_delivered = {}
+last_delivered_amount = {}
 switched = False
 item_name = []
 lines = []
@@ -31,6 +34,8 @@ last_release = None
 user_os = None
 item_count = 0
 percent_complete = 0
+contributed_display_amount = []
+contributed_display_name = []
 all_comodities = [
     "Agronomic Treatment",
     "Explosives",
