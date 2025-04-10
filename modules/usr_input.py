@@ -33,6 +33,7 @@ def user_input():
             elif (usr_input == "app-mode-2") or (usr_input == "shopping-list"):
                 state.switched = True
                 state.just_started = False
+                state.initialized = False
                 state.app_mode = "2"
                 print("Switched to shopping list tracking")
             elif usr_input == "app-mode-3":
