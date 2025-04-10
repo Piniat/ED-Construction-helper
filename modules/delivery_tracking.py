@@ -49,8 +49,6 @@ def colonisation_tracker():
         clean_screen.clear_screen()
         if state.ship_cargo_space == 0:
             ship_cargo_ask.request_ship_cargo()
-        state.item_name_list = []
-        state.item_count_list = []
         state.delivered_amount = []
         state.current_amount_delivered = []
         if not os.path.isfile("Construction_progress.json"):
@@ -100,8 +98,6 @@ def colonisation_tracker():
                         item_name = re.sub(r'[^a-zA-Z0-9]', '', resource.get('Name_Localised', resource.get('Name')).strip().lower().replace(" ", "").replace("name", ""))
                         needed_amount = resource.get('RequiredAmount')
                         provided_amount = resource.get('ProvidedAmount')
-                        state.item_name_list.append(item_name)
-                        state.item_count_list.append(needed_amount)
                         # Update the current delivery amount for this resource
                         updated_needed = needed_amount - provided_amount
                         current_items.add(item_name)
