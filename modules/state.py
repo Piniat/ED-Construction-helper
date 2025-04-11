@@ -1,5 +1,5 @@
 #IMPORTANT!!
-updater_verion = "v0.1.0-updater"
+updater_verion = "v0.1.1-updater"
 cargo_read_attempts = 0
 journal_file_path = None
 new_journal_file = None
@@ -33,7 +33,7 @@ update_attempts = 0
 last_release = None
 user_os = None
 item_count = 0
-percent_complete = 0
+percent_complete = None
 contributed_display_amount = []
 contributed_display_name = []
 all_comodities = [

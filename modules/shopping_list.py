@@ -1,4 +1,4 @@
-from modules import state, start_input, clean_screen, elite_timestamp, event_handler, ship_cargo_ask, print_shopping_list
+from . import state, start_input, clean_screen, elite_timestamp, event_handler, ship_cargo_ask, print_shopping_list
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.shortcuts import prompt
@@ -9,6 +9,7 @@ import ndjson
 import json
 import math
 import shutil
+import time
 
 def tracking_mode():
     complete = WordCompleter(state.all_comodities, ignore_case=True)
@@ -51,7 +52,11 @@ def tracking_mode():
             if os.path.isfile('Construction_progress.json'):
                 shutil.copyfile('Construction_progress.json', 'progress.json')
             else:
-                print("Error. File not found. Proceeding with normal creation...")
+                print("Error. File not found. Please create a delivery list first for auto creation to work.")
+                time.sleep(2)
+                print("Exiting to avoid errors...")
+                time.sleep(1)
+                state.app_mode = None
                 os._exit(0)
     elif (state.initialized == False) or (state.switched == True):
         with open('progress.json', 'r') as openfile:

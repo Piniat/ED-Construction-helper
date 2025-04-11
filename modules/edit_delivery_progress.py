@@ -7,6 +7,7 @@ import json
 import os
 
 def edit_colonisation_progress():
+    print("Warning: The delivery list is now automatically synced with in-game data. Manual edits may be overwritten when new journal events are processed.")
     complete = WordCompleter(state.all_comodities, ignore_case=True)
     if not os.path.isfile('Construction_progress.json'):
         print("Error no list detected, please make one first")

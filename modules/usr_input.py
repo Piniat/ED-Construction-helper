@@ -15,7 +15,7 @@ style = Style.from_dict({
 })
 
 def user_input():
-    command_list = WordCompleter(["help", "app-mode-1", "app-mode-2", "app-mode-3", "override-docked", "override-docked-construction", "edit-shopping-list", "edit-delivery-progress", "edit-ship-cargo", "exit", "reset-progress", "delivery-tracker", "shopping-list"], ignore_case=True)
+    command_list = WordCompleter(["help", "app-mode-1", "app-mode-2", "app-mode-3", "edit-shopping-list", "edit-delivery-progress", "edit-ship-cargo", "exit", "reset-progress", "delivery-tracker", "shopping-list"], ignore_case=True)
     while True:
         with patch_stdout():
             usr_input = prompt("> ", cursor=CursorShape.BLINKING_BLOCK, completer=command_list, complete_while_typing=True, complete_in_thread=True)
@@ -24,7 +24,7 @@ def user_input():
                 time.sleep(1)
                 exit_app.close_app()
             elif usr_input == "help":
-                print("List of commands: \n exit - exits the program \n delivery-tracker - switches to construction delivery tracking \n shopping-list - switches to app to shopping list mode \n app-mode-3 - switches app to journal monitoring mode \n edit-shopping-list - allows you to edit shopping list \n edit-delivery-progress - allows you to edit the delivery progress list, \n reset-progress - deletes shopping list or construction progress allowing you to start from stratch \n override-docked - overrides docked status in mode 3 \n override-docked-construction - overrides if you are docked at a constructions site / megaship (any cargo removed from your hold will be counted towards progress to buiding) \n edit-ship-cargo")
+                print("List of commands: \n exit - exits the program \n delivery-tracker - switches to construction delivery tracking \n shopping-list - switches to app to shopping list mode \n app-mode-3 - switches app to journal monitoring mode \n edit-shopping-list - allows you to edit shopping list \n edit-delivery-progress - allows you to edit the delivery progress list, \n reset-progress - deletes shopping list or construction progress allowing you to start from stratch \n edit-ship-cargo")
             elif (usr_input == "app-mode-1") or (usr_input == "delivery-tracker"):
                 state.switched = True
                 state.just_started = False
@@ -41,28 +41,28 @@ def user_input():
                 state.just_started = False
                 state.app_mode = "3"
                 print("Switched to journal logging mode")
-            elif usr_input == "override-docked":
-                print("Current status: ", state.ship_docked)
-                status = prompt("Are you docked? y/n \n> ")
-                if status == "y":
-                    state.ship_docked = True
-                    print("Current status: ", state.ship_docked)
-                elif status == "n":
-                    state.ship_docked == False
-                    print("Current status: ", state.ship_docked)
-                else:
-                    print("Error. Please choose y or n")
-            elif usr_input == "override-docked-construction":
-                print("Current status: ", state.docked_at_construction)
-                state_colon = prompt("Are you docked at a place where colonisation contributions are accepted? y/n \n> ")
-                if state_colon == "y":
-                    state.docked_at_construction = True
-                    print("Current status: ", state.docked_at_construction)
-                elif state_colon == "n":
-                    state.docked_at_construction = False
-                    print("Current status: ", state.docked_at_construction)
-                else:
-                    print("Error. Please choose y or n")
+            #elif usr_input == "override-docked":
+            #    print("Current status: ", state.ship_docked)
+            #    status = prompt("Are you docked? y/n \n> ")
+            #    if status == "y":
+            #        state.ship_docked = True
+            #        print("Current status: ", state.ship_docked)
+            #    elif status == "n":
+            #        state.ship_docked == False
+            #        print("Current status: ", state.ship_docked)
+            #    else:
+            #        print("Error. Please choose y or n")
+            #elif usr_input == "override-docked-construction":
+            #    print("Current status: ", state.docked_at_construction)
+            #    state_colon = prompt("Are you docked at a place where colonisation contributions are accepted? y/n \n> ")
+            #    if state_colon == "y":
+            #        state.docked_at_construction = True
+            #        print("Current status: ", state.docked_at_construction)
+            #    elif state_colon == "n":
+            #        state.docked_at_construction = False
+            #        print("Current status: ", state.docked_at_construction)
+            #    else:
+            #        print("Error. Please choose y or n")
             elif usr_input == "edit-shopping-list":
                 edit_shopping_list.edit_list()
             elif usr_input == "edit-delivery-progress":

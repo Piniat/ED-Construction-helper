@@ -15,30 +15,27 @@ def print_construction_progress():
     try:
         with open('Construction_progress.json', "r") as progress:
             progress_data = json.load(progress)
+            max_item_length = max(len(item) for item in progress_data)
             for item, count in progress_data.items():
                 total += int(count)
                 if count > 0:
-                    if item == "terrainenrichmentsystems":
-                        print(f"    Landenrichmentsystems: {count} - Landenrichmentsystems")
-                    else:
-                        print(f"    {item.capitalize()}: {count}")
+                    print(f"{item.capitalize():<{max_item_length}}: {count:>{5}}")
                 elif count < 0:
-                    if item == "terrainenrichmentsystems":
-                        print(f"    ✔!  Landenrichmentsystems: {count} - Landenrichmentsystems")
-                    else:
-                        print(f"    ✔!  {item.capitalize()}: {count} - Overdelivered! Did someone else help deliver?")
+                    print(f"✔!  {item.capitalize():<{max_item_length - 3}}: {count:>{5}} - This shouldn't happen...")
                 elif count == 0:
-                    if item == "terrainenrichmentsystems":
-                        print(f"    ✔  Landenrichmentsystems: {count} - Landenrichmentsystems")
-                    else:
-                        print(f"    ✔  {item.capitalize()}: {count}")
+                    print(f"✔  {item.capitalize():<{max_item_length - 3}}: {count:>{5}}")
         print("\n" + "-" * 60)
         trips_left = total/state.ship_cargo_space
         trips_left = math.ceil(trips_left)
         print(f"{trips_left} trips left\n")
-        print(f"{state.percent_complete}% of construction complete")
+        if state.percent_complete == None:
+            print("Percentage will be displayed on game journal update")
+        else:
+            #progress_bar = '█' * int(state.percent_complete * 0.2)  # Bar length will be out of 20 (adjust if needed)
+            #remaining_bar = '░' * (20 - len(progress_bar))
+            #print(f"Progress: [{progress_bar}{remaining_bar}] {state.percent_complete:.2f}%")
+            print(f"Progress: {state.percent_complete}")
         print("\n" + "-" * 60)
-        #if state.contributed_display_name != []:
         for item in state.contributed_display_name:
              print(f"{state.contributed_display_amount[loops]} tonnes of {state.contributed_display_name[loops]} delivered")
              loops += 1

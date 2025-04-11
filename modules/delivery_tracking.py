@@ -11,6 +11,7 @@ import re
 from prompt_toolkit import prompt
 from prompt_toolkit.cursor_shapes import CursorShape
 
+#updates progress file
 def write_delivery_progress(item_name, updated_needed):
     try:
         if os.path.isfile("Construction_progress.json"):
@@ -25,6 +26,7 @@ def write_delivery_progress(item_name, updated_needed):
     except (json.JSONDecodeError, FileNotFoundError) as e:
         print(f"Error updating Construction_progress.json: {e}")
 
+#removes commodities not found in the colonisation event
 def clean_invalid_items(current_items):
     try:
         if os.path.isfile("Construction_progress.json"):
@@ -41,7 +43,6 @@ def clean_invalid_items(current_items):
     except (json.JSONDecodeError, FileNotFoundError) as e:
         print(f"Error updating Construction_progress.json: {e}")
         
-
 def colonisation_tracker():
     state.ready_to_print = False
     #initial setup for tracking
@@ -71,43 +72,26 @@ def colonisation_tracker():
         try:
             curr_event = ndjson.loads(line.strip())
             for state.event in curr_event:
-                if state.event.get('event') == "Docked":
-                    print("Docked at a station")
-                    state.ship_docked = True
-                    #checks for colonisationcontribution service and if available sets state.docked_at_construction
-                    if "colonisationcontribution" in state.event.get('StationServices', []):
-                        print("Docked at a construction ship, tracking deliveries.")
-                        state.docked_at_construction = True
-                    else:
-                        state.docked_at_construction = False
-                #clears both docked statuses
-                elif state.event.get('event') == "Undocked":
-                    state.ship_docked = False
-                    state.docked_at_construction = False
-                    print("Undocked from station")
-                #terminates app if shutdown event is detected
-                elif state.event.get('event') == "Shutdown":
+                #exits app if shutdown event is detected
+                if state.event.get('event') == "Shutdown":
                     event_handler.game_shutdown()
                 elif state.event.get('event') == "ColonisationConstructionDepot":
-                    #print("construction data detected")
                     current_items = set()
-                    state.percent_complete = int(state.event.get('ConstructionProgress'))
-                    state.percent_complete = round(state.event.get('ConstructionProgress'))
+                    state.percent_complete = state.event.get('ConstructionProgress')
+                    state.percent_complete = int(state.percent_complete * 100)
                     for resource in state.event.get('ResourcesRequired'):
                         # Clean and set the item name
                         item_name = re.sub(r'[^a-zA-Z0-9]', '', resource.get('Name_Localised', resource.get('Name')).strip().lower().replace(" ", "").replace("name", ""))
                         needed_amount = resource.get('RequiredAmount')
                         provided_amount = resource.get('ProvidedAmount')
-                        # Update the current delivery amount for this resource
+                        # Update the current needed amount for this resource
                         updated_needed = needed_amount - provided_amount
                         current_items.add(item_name)
-                        # Check if there's any change compared to the last delivered amount (assuming state.last_delivered_amount is a dict)
+                        # Check if there's any change compared to the last delivered amount
                         if state.last_delivered_amount.get(item_name) != provided_amount:
                             write_delivery_progress(item_name, updated_needed)
                             # Update the last delivered amount for this resource
                             state.last_delivered_amount[item_name] = provided_amount
-                    state.percent_complete = state.event.get('ConstructionProgress')
-                    state.percent_complete = int(state.percent_complete * 100)
                     clean_invalid_items(current_items)
                 #track how much of a commodity was delivered
                 elif state.event.get('event') == "ColonisationContribution":
