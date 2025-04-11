@@ -43,7 +43,7 @@ config.ini also stores the journal folder path, app version (though honestly it 
 The app uses commands to function. These consist of:
 <ul>
   <li>help - displays a list of commands</li>
-  <li>delivery: Switches to Construction Progress tracking Mode</li>
+  <li>delivery-tracker: Switches to Construction Progress tracking Mode</li>
   <li>shopping-list: Switches to Shopping List tracking Mode</li>
   <li>app-mode-3: Switches to Journal Monitoring Mode. No use other than seeing the logged events</li>
   <li>edit-shopping-list: Allows you to edit your shopping list in-app</li>
