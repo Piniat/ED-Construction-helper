@@ -1,6 +1,5 @@
 # ED Construction helper
 This app was made to track deliveries to colonisation constructions (colonisation megaships or construction sites) and track the gathering of materials using a shopping list. It's basically a self updating spreadsheet.<br>
-### Important! Run the app after starting elite dangerous or it'll read outdated journal files.<br>
 The app can currently:<br>
 <ul>
   <li>Track deliveries to constructions</li>
@@ -34,7 +33,7 @@ python __main__.py
 When first launching the app will ask for the game journal file location and exit. The journal location is stored in config.ini, should the event tracking not work or any errors occur delete that file and retry.
 <br>
 <br>
-When first choosing the shopping or construction delivery list mode you will ne asked to input how many items you need to buy, after which you will be asked to input the name and quantity of each item.
+When first choosing the shopping or construction delivery list mode you will ne asked to input how many items you need to buy, after which you will be asked to input the name and quantity of each item. There is also a auto list creator for the construction delivery list
 <br>
 <br>
 Updates can be disabled by editing config.ini and setting the value of [AUTO_UPDATE] to false
@@ -42,11 +41,9 @@ Updates can be disabled by editing config.ini and setting the value of [AUTO_UPD
 The app uses commands to function. These consist of:
 <ul>
   <li>help - displays a list of commands</li>
-  <li>app-mode-1: Switches to Construction Progress Mode</li>
-  <li>app-mode-2: Switches to Shopping List Mode</li>
+  <li>delivery: Switches to Construction Progress Mode</li>
+  <li>shopping-list: Switches to Shopping List Mode</li>
   <li>app-mode-3: Switches to Journal Monitoring Mode</li>
-  <li>override-docked: Override the docked status for the app</li>
-  <li>override-docked-construction: Override the docked status at a construction site</li>
   <li>edit-shopping-list: Allows you to edit your shopping list in-app</li>
   <li>edit-construction-progress: Allows you to edit your construction progress</li>
   <li>edit-ship-cargo: Allows you to update your ship's cargo space</li>
