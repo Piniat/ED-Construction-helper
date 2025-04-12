@@ -21,7 +21,7 @@ def print_construction_progress():
                 if count > 0:
                     print(f"{item.capitalize():<{max_item_length}}: {count:>{5}}")
                 elif count < 0:
-                    print(f"✔!  {item.capitalize():<{max_item_length - 3}}: {count:>{5}} - This shouldn't happen...")
+                    print(f"✔!  {item.capitalize():<{max_item_length - 4}}: {count:>{5}} - This shouldn't happen...")
                 elif count == 0:
                     print(f"✔  {item.capitalize():<{max_item_length - 3}}: {count:>{5}}")
         print("\n" + "-" * 60)

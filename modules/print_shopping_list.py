@@ -21,11 +21,11 @@ def print_list():
     for material, amount in initial_list.items():
         state.total += amount
         if amount > 0:
-            print(f"    {material.capitalize()}: {amount:<{max_item_length}}")
+            print(f"{material.capitalize():<{max_item_length}}: {amount}")
         elif amount == 0:
-            print(f"    ✔  {material.capitalize()}: {amount:<{max_item_length}}")
+            print(f"✔  {material.capitalize():<{max_item_length - 3}}: {amount}")
         elif amount < 0:
-            print(f"    ✔!  {material.capitalize()}: {amount:<{max_item_length}} - overstock!")
+            print(f"✔!  {material.capitalize():<{max_item_length - 4}}: {amount} - overstock!")
     print("\n" + "-" * 60)
     trips_left = state.total/state.ship_cargo_space
     trips_left = math.ceil(trips_left)
