@@ -17,23 +17,15 @@ def print_list():
     print("Shopping list mode")
     print("\n" + "-" * 60)
     print("Materials:")
+    max_item_length = max(len(item) for item in initial_list)
     for material, amount in initial_list.items():
         state.total += amount
         if amount > 0:
-            if material == "terrainenrichmentsystems":
-                print(f"    Landenrichmentsystems: {amount} - Landenrichmentsystems")
-            else:
-                print(f"    {material.capitalize()}: {amount}")
+            print(f"    {material.capitalize()}: {amount:<{max_item_length}}")
         elif amount == 0:
-            if material == "terrainenrichmentsystems":
-                print(f"    Landenrichmentsystems: {amount} - Landenrichmentsystems")
-            else:
-                print(f"    ✔  {material.capitalize()}: {amount}")
+            print(f"    ✔  {material.capitalize()}: {amount:<{max_item_length}}")
         elif amount < 0:
-            if material == "terrainenrichmentsystems":
-                print(f"    Landenrichmentsystems: {amount} - Landenrichmentsystems")
-            else:
-                print(f"    ✔!  {material.capitalize()}: {amount} - overstock!")
+            print(f"    ✔!  {material.capitalize()}: {amount:<{max_item_length}} - overstock!")
     print("\n" + "-" * 60)
     trips_left = state.total/state.ship_cargo_space
     trips_left = math.ceil(trips_left)
