@@ -74,7 +74,7 @@ def colonisation_tracker():
                 elif state.event.get('event') == "ColonisationConstructionDepot":
                     current_items = set()
                     state.percent_complete = state.event.get('ConstructionProgress')
-                    state.percent_complete = int(state.percent_complete * 100)
+                    state.percent_complete = round(state.percent_complete * 100)
                     for resource in state.event.get('ResourcesRequired'):
                         # Clean and set the item name
                         item_name = re.sub(r'[^a-zA-Z0-9]', '', resource.get('Name_Localised', resource.get('Name')).strip().lower().replace(" ", "").replace("name", ""))

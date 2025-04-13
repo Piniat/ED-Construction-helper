@@ -27,16 +27,16 @@ def print_construction_progress():
         print("\n" + "-" * 60)
         trips_left = total/state.ship_cargo_space
         trips_left = math.ceil(trips_left)
-        print(f"{trips_left} trips left\n")
+        print(f"{trips_left} trip{'s' if trips_left != 1 else ''} left\n")
         if state.percent_complete == None:
             print("Percentage will be displayed on game journal update")
         else:
-            print(f"Progress: {state.percent_complete}")
+            print(f"Progress: {state.percent_complete}%")
         print("\n" + "-" * 60)
         for item in state.contributed_display_name:
-             print(f"{state.contributed_display_amount[loops]} tonnes of {state.contributed_display_name[loops]} delivered")
-             loops += 1
-             state.contributed_display_name.clear()
-             state.contributed_display_amount.clear()
+            print(f"{state.contributed_display_amount[loops]} tonnes of {state.contributed_display_name[loops]} delivered")
+            loops += 1
+        state.contributed_display_name.clear()
+        state.contributed_display_amount.clear()
     except (json.JSONDecodeError, FileNotFoundError) as e:
                 print(f"Error reading cargo file: {e}")
