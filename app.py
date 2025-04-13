@@ -4,7 +4,7 @@ import configparser
 import json
 import threading
 import glob
-from modules import state, journal_logging, exit_app, select_app_mode, shopping_list, clean_screen, del_tracking_again, get_journal_file, error_logger, delivery_tracking
+from modules import state, journal_logging, exit_app, select_app_mode, shopping_list, clean_screen, get_journal_file, error_logger, delivery_tracking
 
 def get_latest_journal():
     latest_file = glob.glob(os.path.join(state.journal_folder, 'Journal.*.log'))
