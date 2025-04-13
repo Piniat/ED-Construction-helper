@@ -26,8 +26,8 @@ def onboarding():
         continue_onboarding()
         print('"exit" this will allow you to exit the app in most areas of the app (some areas might require you to close the window to close the app) \n')
         continue_onboarding()
-        print("Ok, I think that's all of the more important ones. Before you go please remember to report any bugs/errors or crashes you find on github, it really can help me fix them faster. I'm also open to suggestions and critisism. Anyways, have fun hauling CMDR! \n")
-        prompt("(Press enter to continue)")
+        print("Ok, I think that's all of the more important ones. Before you go please remember to report any bugs/errors and crashes you find on github, it really can help me fix them faster. I'm also open to suggestions. Anyways, have fun hauling CMDR! \n")
+        continue_onboarding()
         print("Continuing app startup...")
         update_config()
         time.sleep(2)
@@ -47,9 +47,11 @@ def update_config():
     auto_update = config["AUTO_UPDATE"]["value"]
     journal_folder = config['JOURNAL_PATH']['path']
     app_version = config['Version']['version']
+    updater_version = config['Updater_version']["version"]
     config['JOURNAL_PATH'] = {'path': journal_folder}
     config['AUTO_UPDATE'] = {'value': auto_update}
     config['Version'] = {'version': app_version}
     config['FIRST_TIME_LAUNCH'] = {'value': False}
+    config['Updater_version'] = {'version': updater_version}
     with open('config.ini', 'w') as configfile:
         config.write(configfile)
