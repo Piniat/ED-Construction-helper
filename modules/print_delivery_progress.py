@@ -31,9 +31,6 @@ def print_construction_progress():
         if state.percent_complete == None:
             print("Percentage will be displayed on game journal update")
         else:
-            #progress_bar = '█' * int(state.percent_complete * 0.2)  # Bar length will be out of 20 (adjust if needed)
-            #remaining_bar = '░' * (20 - len(progress_bar))
-            #print(f"Progress: [{progress_bar}{remaining_bar}] {state.percent_complete:.2f}%")
             print(f"Progress: {state.percent_complete}")
         print("\n" + "-" * 60)
         for item in state.contributed_display_name:

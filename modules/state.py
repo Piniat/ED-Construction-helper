@@ -1,5 +1,5 @@
 #IMPORTANT!!
-updater_verion = "v0.1.1-updater"
+updater_verion = None
 cargo_read_attempts = 0
 journal_file_path = None
 new_journal_file = None
@@ -28,9 +28,11 @@ just_started = True
 event = {}
 formatted_timestamp = None
 REPO = "https://api.github.com/repos/Piniat/ED-Construction-helper/releases/latest"
+REPO_ALL = "https://api.github.com/repos/Piniat/ED-Construction-helper/releases"
 current_version = None
 update_attempts = 0
 last_release = None
+last_updater_release = None
 user_os = None
 item_count = 0
 percent_complete = None

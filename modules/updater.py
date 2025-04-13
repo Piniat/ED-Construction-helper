@@ -5,6 +5,23 @@ import time
 from prompt_toolkit.shortcuts import ProgressBar
 import subprocess
 from . import state
+import configparser
+
+def update_updater_version():
+    print("Updating config.ini with new version...")
+    config = configparser.ConfigParser()
+    config.read("config.ini")
+    auto_update = config["AUTO_UPDATE"]["value"]
+    journal_folder = config['JOURNAL_PATH']['path']
+    CURRENT_VERSION = config['Version']["version"]
+    firstlaunch = config["FIRST_TIME_LAUNCH"]["value"]
+    config['JOURNAL_PATH'] = {'path': journal_folder}
+    config['AUTO_UPDATE'] = {'value': auto_update}
+    config['Version'] = {'version': CURRENT_VERSION}
+    config['FIRST_TIME_LAUNCH'] = {'value': firstlaunch}
+    config['Updater_version'] = {'version': state.last_updater_release}
+    with open('config.ini', 'w') as configfile:
+        config.write(configfile)
 
 def updater_update():
     global user_platform
@@ -20,7 +37,7 @@ def updater_update():
     else:
         print(f"Unsupported platform. Detected platform: {platform}")
         return
-    download_link = f"https://github.com/Piniat/ED-Construction-helper/releases/download/{state.updater_verion}/{executable_name}"
+    download_link = f"https://github.com/Piniat/ED-Construction-helper/releases/download/{state.last_updater_release}/{executable_name}"
     filename = executable_name
     print(download_link)
     print(f"Downloading from {download_link}")
@@ -35,6 +52,9 @@ def updater_update():
                         if chunk:
                             download_file.write(chunk)
             print("Download complete")
+            print("Updating updater version in config.ini...")
+            update_updater_version()
+            time.sleep(0.5)
     except requests.exceptions.HTTPError as http_err:
         print(f"A HTTP error has occurred: {http_err}")
     except requests.exceptions.ConnectionError:
@@ -97,6 +117,4 @@ def update():
             print(f"An error occurred: {err}")
         if not os.path.isfile(executable):
             updater_update()
-        print("Sleeping for 2 seconds to avoid errors")
-        time.sleep(2)
         start_extract()

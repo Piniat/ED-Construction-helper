@@ -1,6 +1,6 @@
 import os
 import time
-from . import state
+from . import state, error_logger
 import glob
 
 def get_latest_journal():
@@ -23,4 +23,5 @@ def get_latest_journal():
             else:
                 print("Too many errors. Aborting...")
                 time.sleep(2)
+                error_logger.log_file_error()
                 os._exit(0)

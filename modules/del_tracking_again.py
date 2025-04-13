@@ -1,3 +1,5 @@
+#no longer used in favour of delivery_tracking which now uses journal events
+
 from modules import state, clean_screen, print_delivery_progress, create_delivery_tracking, event_handler, start_input, ship_cargo_ask
 import os
 import json
