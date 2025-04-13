@@ -23,6 +23,8 @@ def extract():
     else:
         print("Unsupported platform")
         return
+    time.sleep(2)
+    print("Waiting 2 seconds to avoid possible race condition")
     filename = state.user_os + ".zip"
     extract_update.extractor()
     os.remove(filename)
