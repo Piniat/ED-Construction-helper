@@ -17,7 +17,7 @@ A clear and concise description of what you expected to happen.
 What actually happened instead of what was ment to happen
 
 **Logs**
-The contents of the latest log file in the /logs folder or what was displayed in the app
+The latest log file in the /logs folder when the crash happened or what error was displayed in the app
 
 **Desktop (please complete the following information):**
  - OS: [Windows or Linux]
