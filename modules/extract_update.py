@@ -4,7 +4,6 @@ import os
 
 def extractor():
     filename = state.user_os + ".zip"
-    #filename = "/home/mateusz/Desktop/ED:Coloniser-helper/databuild/linux.zip"
     if zipfile.is_zipfile(filename):
         print("valid zip detected")
     else:
