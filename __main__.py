@@ -4,7 +4,7 @@ import sys
 import time
 import configparser
 import app
-from modules import state, updater, first_time_launch, clean_screen, error_logger
+from modules import state, updater, first_time_launch, clean_screen, error_logger, exit_app
 from prompt_toolkit import prompt
 
 def start_app():
@@ -66,8 +66,7 @@ def request_version():
                     updater.update()
                     print("Update complete. Please restart the app...")
                     time.sleep(1)
-                    #calling app.exit_app() with the () crashes for whatever reason
-                    app.exit_app
+                    exit_app.close_app()
                 elif update_consent == "n":
                     print("Skipping update...")
                     time.sleep(0.5)
@@ -81,8 +80,7 @@ def request_version():
                     updater.updater_update()
                     print("Update complete. Please restart the app...")
                     time.sleep(1)
-                    #same as above...
-                    app.exit_app
+                    exit_app.close_app()
                 elif update_consent == "n":
                     print("Skipping update...")
                     time.sleep(0.5)
