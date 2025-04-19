@@ -36,6 +36,7 @@ def edit_colonisation_progress():
                     print(f"{key} not found")
             else:
                 print("Invalid choice. Please enter 'add', 'edit', or 'remove'.")
+                edit_colonisation_progress()
         with open('Construction_progress.json', 'w') as writefile:
             json.dump(loaded_list, writefile, indent=4)
         print("done!")
