@@ -10,7 +10,7 @@ def template():
 
 def unhandled_event():
     print("\n" + "-" * 60)
-    print("[Unhandled event]: " + state.event.get('event'))
+    print("Event: " + state.event.get('event'))
 
 def game_shutdown():
     template()
