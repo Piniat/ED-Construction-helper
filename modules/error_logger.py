@@ -3,6 +3,7 @@ from tzlocal import get_localzone
 import os
 import traceback
 import glob
+import time
 
 
 def log_file_error():
@@ -19,16 +20,17 @@ def log_file_error():
             if os.path.isfile(os.path.join(logs_folder, file)):
                 count+=1
         if count > 90:
+            print(f"Warning 50+ log files detected ({count}). Purging...")
             while count > 30:
                 logs_list = glob.glob(os.path.join(logs_folder, '*_error_log*.txt'))
-                print("Warning 50+ log files detected. Purging...")
                 oldest_error_log = min(logs_list, key=os.path.getctime)
-                #log_delete_path = os.path.join(logs_folder, file)
-                print(oldest_error_log)
                 os.remove(oldest_error_log)
                 count -= 1
-        print(f"File count: {count}")
-        print(f"Unhandled error detected. Details in log file {log_path}")
+            print("Logs purged. 30 Newest logs files have been kept")
+            time.sleep(0.5)
+            print(f"Error details in log file {log_path}")
+        else:
+            print(f"Unhandled error detected. Details in log file {log_path}")
         with open(log_path, "w") as log_file:
             traceback.print_exc(file=log_file)
         input("Press enter to exit")
@@ -39,3 +41,19 @@ def log_file_error():
         traceback.print_exc()
         input("Press enter to exit")
         os._exit(0)
+
+def clear_all_logs():
+    last_removed = None
+    if os.path.exists("logs"):
+        logs_folder = ("logs")
+        try:
+            for file in os.listdir(logs_folder):
+                path = os.path.join(logs_folder, file)
+                os.remove(path)
+                last_removed = file
+            if last_removed == None:
+                print("No logs to delete")
+        except:
+            log_file_error()  
+    else:
+        print("Error. No logs directory found")
