@@ -34,6 +34,7 @@ def edit_list():
                     print(f"{key} not found")
             else:
                 print("Invalid choice. Please enter 'add', 'edit', or 'remove'.")
+                edit_list()
         with open('progress.json', 'w') as writefile:
             json.dump(loaded_list, writefile, indent=4)
         print("done!")
