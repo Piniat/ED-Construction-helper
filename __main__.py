@@ -125,10 +125,10 @@ try:
         path = input("Input game journal file path without quotes:  \n")
         config = configparser.ConfigParser()
         config['JOURNAL_PATH'] = {'path': path}
-        config['AUTO_UPDATE'] = {'value': True}
+        config['AUTO_UPDATE'] = {'value': "True"}
         config['Version'] = {'version': CURRENT_VERSION}
-        config['FIRST_TIME_LAUNCH'] = {'value': True}
-        config['Updater_version'] = {'version': None}
+        config['FIRST_TIME_LAUNCH'] = {'value': "True"}
+        config['Updater_version'] = {'version': "None"}
         with open('config.ini', 'w') as configfile:
             config.write(configfile)
         print("Config file created.")
@@ -152,9 +152,9 @@ try:
         path = input("Input game journal file path without quotes:  \n")
         config['JOURNAL_PATH'] = {'path': path}
     if missing_auto_update:
-        config['AUTO_UPDATE'] = {'value': True}
+        config['AUTO_UPDATE'] = {'value': "True"}
     if missing_first_launch:
-        config['FIRST_TIME_LAUNCH'] = {'value': True}
+        config['FIRST_TIME_LAUNCH'] = {'value': "True"}
     if missing_updater_version:
         config['Updater_version'] = {'version': ""}
     if missing_auto_update or missing_journal or missing_version or missing_first_launch or missing_updater_version:

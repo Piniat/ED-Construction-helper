@@ -51,7 +51,7 @@ def update_config():
     config['JOURNAL_PATH'] = {'path': journal_folder}
     config['AUTO_UPDATE'] = {'value': auto_update}
     config['Version'] = {'version': app_version}
-    config['FIRST_TIME_LAUNCH'] = {'value': False}
+    config['FIRST_TIME_LAUNCH'] = {'value': "False"}
     config['Updater_version'] = {'version': updater_version}
     with open('config.ini', 'w') as configfile:
         config.write(configfile)
