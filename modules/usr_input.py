@@ -31,17 +31,23 @@ def user_input():
                     state.just_started = False
                     state.app_mode = "1"
                     print("Switched to construction progress tracking.")
+                    state.input_started = False
+                    break
                 elif (usr_input == "app-mode-2") or (usr_input == "shopping-list"):
                     state.switched = True
                     state.just_started = False
                     state.initialized = False
                     state.app_mode = "2"
                     print("Switched to shopping list tracking")
+                    state.input_started = False
+                    break
                 elif (usr_input == "app-mode-3") or (usr_input == "journal-monitor"):
                     state.switched = True
                     state.just_started = False
                     state.app_mode = "3"
                     print("Switched to journal logging mode")
+                    state.input_started = False
+                    break
                 elif usr_input == "edit-shopping-list":
                     edit_shopping_list.edit_list()
                 elif usr_input == "edit-delivery-progress":
