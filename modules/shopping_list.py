@@ -22,12 +22,7 @@ def tracking_mode():
             for i in range(item_amount):
                 key = prompt("Commodity name in all lower case and no spaces: \n", completer=complete, complete_while_typing=True, complete_in_thread=True).strip().lower().replace(" ", "")
                 key = re.sub(r'[^a-zA-Z0-9]', '', key)
-                while True:
-                    try:
-                        value = int(prompt("Amount needed: \n"))
-                        break
-                    except:
-                        print("Invalid input. Please input the number of commodities you need")
+                value = int(prompt("Amount needed: \n"))
                 initial_list[key] = value
                 i += 1
             formatted_list = json.dumps(initial_list, indent=4)
