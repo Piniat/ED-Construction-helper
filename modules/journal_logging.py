@@ -53,6 +53,10 @@ def log_mode():
                             event_handler.rank()
                         elif state.event.get('event') == "MarketBuy":
                             event_handler.marketbuy()
+                        elif state.event.get('event') == "MissionAccepted":
+                            event_handler.missionaccepted()
+                        elif state.event.get('event') == "MissionCompleted":
+                            event_handler.missioncompleted()
                         else:
                             event_handler.unhandled_event()
                 except json.JSONDecodeError:

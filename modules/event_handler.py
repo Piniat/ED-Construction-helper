@@ -117,3 +117,20 @@ def marketbuy():
     print(f"{'Count':<20}: {state.event.get('Count')}")
     print(f"{'Buy Price':<20}: {state.event.get('BuyPrice')}")
     print(f"{'Total Cost':<20}: {state.event.get('TotalCost')}")
+
+def missionaccepted():
+    template()
+    print(f"{'Type':<20}: {state.event.get('LocalisedName')}")
+    print(f"{'Faction':<20}: {state.event.get('Faction')}")
+    print(f"{'Mission ID':<20}: {state.event.get('MissionID')}")
+    print(f"{'Influence':<20}: {state.event.get('Influence')}")
+    print(f"{'Reputation':<20}: {state.event.get('Reputation')}")
+    print(f"{'Reward':<20}: {state.event.get('Reward')}CR")
+    print(f"{'Wing':<20}: {state.event.get('Wing')}")
+
+def missioncompleted():
+    template()
+    print(f"{'Name':<20}: {state.event.get('Name')}")
+    print(f"{'Faction':<20}: {state.event.get('Faction')}")
+    print(f"{'Mission ID':<20}: {state.event.get('MissionID')}")
+    print(f"{'Reward':<20}: {state.event.get('Reward')}CR")

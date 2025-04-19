@@ -28,10 +28,21 @@ def print_construction_progress():
         trips_left = total/state.ship_cargo_space
         trips_left = math.ceil(trips_left)
         print(f"{trips_left} trip{'s' if trips_left != 1 else ''} left\n")
-        if state.percent_complete == None:
+        if state.percent_complete is None:
+            print("\n" + "-" * 60)
             print("Percentage will be displayed on game journal update")
         else:
-            print(f"Progress: {state.percent_complete}%")
+            state.percent_complete = round(state.percent_complete, 1)
+            bar_length = 50
+            percent_intiger = int(state.percent_complete)
+            if percent_intiger == 0:
+                 block = 0
+            else:
+                 block = int((bar_length * percent_intiger) / 100)
+            progress = "#" * block + "-" * (bar_length - block)
+            print("\n" + "-" * 60)
+            print(f"Progress: {state.percent_complete}% \n")
+            print(f"[{progress}]")
         print("\n" + "-" * 60)
         for item in state.contributed_display_name:
             print(f"{state.contributed_display_amount[loops]} tonnes of {state.contributed_display_name[loops]} delivered")

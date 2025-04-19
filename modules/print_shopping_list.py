@@ -29,5 +29,5 @@ def print_list():
     print("\n" + "-" * 60)
     trips_left = state.total/state.ship_cargo_space
     trips_left = math.ceil(trips_left)
-    print(f"{trips_left} trips left")
+    print(f"{trips_left} total trips left")
     print("\n" + "-" * 60)
