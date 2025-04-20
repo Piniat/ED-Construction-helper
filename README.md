@@ -16,7 +16,7 @@ The app can currently:<br>
 The app has a simple TUI (Text-based user interface) featuring autocomplete to help avoid typos.<br>
 
 ## Installation
-You can install the provided windows/linux release or (for the most up to date but also possibly buggier versio) clone the repository and run app.py<br>
+You can install the provided windows/linux release or (for the most up to date but also possibly buggier version) clone the repository and run main.py<br>
 ```
 git clone https://github.com/Piniat/ED-Construction-helper.git
 cd ED-Construction-helper
@@ -33,7 +33,7 @@ python __main__.py
 When first launching the app will ask for the game journal file location. The journal location is stored in config.ini, should the event tracking not work or any errors occur delete that file and retry.
 <br>
 <br>
-When first choosing the shopping list mode you will ne asked to input how many items you need to buy, after which you will be asked to input the name and quantity of each item.
+When first choosing the shopping list mode you will ne asked to input how many items you need to buy, after which you will be asked to input the name and quantity of each item.<br>
 For the delivery list you have the option of auto-creating one from the journal logs when docked at a construction, auto copying from the shopping list or manually making one (both of which will get overwritten by construction journal events once docked at one)
 <br>
 <br>
