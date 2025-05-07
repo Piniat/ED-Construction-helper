@@ -1,7 +1,9 @@
 import os
-from . import state
+from . import state, gui
 
-def clear_screen(gui_output=None):
-    if state.is_gui == False:
+def clear_screen(output_widget=None):
+    if output_widget is not None:
+        output_widget.clear()
+    else:
         os.system('cls' if os.name == 'nt' else 'clear')
 

@@ -71,18 +71,21 @@ def gui_run():
         def app_mode_1(self):
             state.app_mode = "1"
             state.switched = True
+            clean_screen.clear_screen(self.output)
             sys.stdout = EmittingStream(window.output)
             sys.stderr = EmittingStream(window.output)
 
         def app_mode_2(self):
             state.app_mode = "2"
             state.switched = True
+            clean_screen.clear_screen(self.output)
             sys.stdout = EmittingStream(window.output)
             sys.stderr = EmittingStream(window.output)
 
         def app_mode_3(self):
             state.app_mode = "3"
             state.switched = True
+            clean_screen.clear_screen(self.output)
             sys.stdout = EmittingStream(window.output)
             sys.stderr = EmittingStream(window.output)
         
