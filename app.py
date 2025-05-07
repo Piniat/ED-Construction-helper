@@ -3,7 +3,8 @@ import time
 import configparser
 import threading
 import glob
-from modules import state, journal_logging, exit_app, select_app_mode, shopping_list, clean_screen, get_journal_file, error_logger, delivery_tracking
+import webview
+from modules import state, journal_logging, exit_app, select_app_mode, shopping_list, clean_screen, get_journal_file, error_logger, delivery_tracking, gui
 
 def get_latest_journal():
     latest_file = glob.glob(os.path.join(state.journal_folder, 'Journal.*.log'))
@@ -31,9 +32,12 @@ def main_loop():
                     shopping_list.tracking_mode()
                 elif state.app_mode == "1":
                     state.just_started = False
-                    #del_tracking_again.colonisation_tracker()
                     delivery_tracking.colonisation_tracker()
                     time.sleep(0.3)
+
+def start_webview():
+    webview.create_window('Inara', 'https://inara.cz/elite/commodities/')
+    webview.start()
 
 def start():
     clean_screen.clear_screen()
@@ -58,4 +62,13 @@ def start():
     state.ship_cargo_space = 0
     file_check_thread = threading.Thread(target=get_journal_file.get_latest_journal, daemon=True)
     file_check_thread.start()
-    main_loop()
+    #inara = input("Run gui? y/n \n>").lower()
+    inara = "y"
+    if inara == "y":
+        start_main_loop = threading.Thread(target=main_loop, daemon=True)
+        start_main_loop.start()
+        state.is_gui = True
+        gui.gui_run()
+        #start_webview()
+    else:
+        main_loop()

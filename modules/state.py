@@ -1,5 +1,6 @@
 #IMPORTANT!!
 updater_verion = None
+is_gui = False
 cargo_read_attempts = 0
 journal_file_path = None
 new_journal_file = None
