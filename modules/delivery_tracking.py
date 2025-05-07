@@ -60,6 +60,8 @@ def colonisation_tracker():
             print_delivery_progress.print_construction_progress()
         state.initialized = True
         state.switched = False
+        time.sleep(2)
+        print_delivery_progress.print_construction_progress()
     # Start user input if not started
     if state.input_started == False:
         start_input.start_user_input()

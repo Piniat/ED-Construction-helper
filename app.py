@@ -68,7 +68,10 @@ def start():
         start_main_loop = threading.Thread(target=main_loop, daemon=True)
         start_main_loop.start()
         state.is_gui = True
-        gui.gui_run()
+        while True:
+            if state.initialized == True:
+                gui.gui_run()
+                break
         #start_webview()
     else:
         main_loop()

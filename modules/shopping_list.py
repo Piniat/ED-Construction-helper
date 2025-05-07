@@ -41,6 +41,8 @@ def tracking_mode():
                     ship_cargo_ask.request_ship_cargo()
                 print_shopping_list.print_list()
                 state.initialized = True
+                time.sleep(2)
+                print_shopping_list.print_list()
             else:
                 print("Error. Incorrect option. Defaulting to no")
         else:
