@@ -7,7 +7,7 @@ delivered_amount = []
 current_amount_delivered = []
 initialized = False
 
-new_list = ""
+new_list = []
 
 ready_to_update = False
 

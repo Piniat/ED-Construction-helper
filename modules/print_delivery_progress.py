@@ -50,7 +50,7 @@ def print_construction_progress(self):
             progress = "#" * block + "-" * (bar_length - block)
             self.percent = state.percent_complete
         for item in state.contributed_display_name:
-            self.extra += f"{state.contributed_display_amount[loops]} tonnes of {state.contributed_display_name[loops]} delivered"
+            self.extra += f"{state.contributed_display_amount[loops]} tonnes of {state.contributed_display_name[loops]} delivered <br>"
             loops += 1
         state.contributed_display_name.clear()
         state.contributed_display_amount.clear()

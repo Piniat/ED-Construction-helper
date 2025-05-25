@@ -29,5 +29,7 @@ class AppWorker(QObject):
                         print(self.event)
                         update_gui.update_lists(self)
                         state.ready_to_update = False
+                    time.sleep(0.5)
                 elif state.app_mode == "journal":
                     journal_logging.display_event(self)
+                    time.sleep(0.5)
