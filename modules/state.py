@@ -1,6 +1,52 @@
-mode = "Journal"
-journal_folder = None
-journal_file_path = ""
+#journal_folder = ""
+#journal_file_path = None
 percent_complete = 0
 event = {}
 thread_started = False
+delivered_amount = []
+current_amount_delivered = []
+initialized = False
+
+new_list = ""
+
+ready_to_update = False
+
+#some below may be unused (they are from the tui)
+updater_verion = None
+cargo_read_attempts = 0
+journal_file_path = None
+new_journal_file = None
+shopping_list_exists = True
+journal_folder = ""
+ship_docked = False
+docked_at_construction = False
+input_started = False
+updated_cargo = {}
+get_updated_cargo = {}
+ship_cargo_space = 2
+item_name_list = []
+item_count_list = []
+delivered_amount = []
+ready_to_print = False
+current_amount_delivered = {}
+last_delivered_amount = {}
+switched = False
+item_name = []
+line = []
+input_thread = None
+total = 0
+app_mode = None
+just_started = True
+event = {}
+formatted_timestamp = None
+REPO = "https://api.github.com/repos/Piniat/ED-Construction-helper/releases/latest"
+REPO_ALL = "https://api.github.com/repos/Piniat/ED-Construction-helper/releases"
+current_version = None
+update_attempts = 0
+last_release = None
+last_updater_release = None
+user_os = None
+item_count = 0
+percent_complete = None
+contributed_display_amount = []
+contributed_display_name = []
