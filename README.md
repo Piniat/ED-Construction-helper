@@ -20,6 +20,7 @@ This is the very work in progress version of a GUI remake of the original ED-Con
   <li>Auto updater</li>
   <li>User onboarding</li>
   <li>Error logger</li>
+  <li>Automatic config creator</li>
 </ul>
 
 Small preview of what it looks like currently:<br>
