@@ -8,19 +8,22 @@ This is the very work in progress version of a GUI remake of the original ED-Con
   <li>Fully automated delivery list creator and ship cargo space detection</li>
   <li>Journal event name readout</li>
   <li>Inara webview page</li>
+  <li>Shopping list creation</li>
+  <li>Shopping list tracking</li>
+  <li>Deletion of both progress files</li>
 </ul><br>
 
 **What needs to be implemented**
 <ul>
-  <li>Shopping list creation</li>
+  <li><s>Shopping list creation</li>
   <li>Shopping list tracking</li>
-  <li>Deletion of both progress files</li>
-  <li>Shopping list editor</li>
+  <li>Deletion of both progress files</s></li>
   <li>Update checker</li>
   <li>Auto updater</li>
   <li>User onboarding</li>
   <li>Error logger</li>
   <li>Automatic config creator</li>
+  <li>Shopping list editor</li>
 </ul>
 
 Small preview of what it looks like currently:<br>
