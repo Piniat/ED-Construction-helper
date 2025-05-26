@@ -7,3 +7,5 @@ __pycache__
 logs
 Shopping_list.json
 asdafsa
+modules/__pycache__/state.cpython-313.pyc
+modules/__pycache__/print_delivery_progress.cpython-313.pyc
