@@ -1,6 +1,6 @@
 from PySide6.QtCore import QObject, Signal
 import time
-from modules import state, delivery_tracker, get_ship_cargo_capacity, update_gui, journal_logging
+from modules import state, delivery_tracker, get_ship_cargo_capacity, update_gui, journal_logging, shopping_list
 import os
 
 
@@ -9,6 +9,8 @@ class AppWorker(QObject):
     percent_html_updated = Signal(str)
     list_updated = Signal(str)
     information_panel = Signal(str)
+    trips_display = Signal(str)
+    creation_ask = Signal()
 
     def main_loop(self):
         self.str_percent = '<html><head/><body><p><span style=" font-size:16pt; font-weight:700;">Awaiting data...</span></p></body></html>'
@@ -32,4 +34,11 @@ class AppWorker(QObject):
                     time.sleep(0.5)
                 elif state.app_mode == "journal":
                     journal_logging.display_event(self)
+                    time.sleep(0.5)
+                elif state.app_mode == "shopping":
+                    shopping_list.tracking_mode(self)
+                    if state.ready_to_update == True:
+                        print(self.event)
+                        update_gui.update_lists(self)
+                        state.ready_to_update = False
                     time.sleep(0.5)

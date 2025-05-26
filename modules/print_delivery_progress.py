@@ -1,20 +1,17 @@
 #from modules import clean_screen, state, generate_time_timestamp
 import json
 import math
-import os
-from . import state
-import time
-import ndjson
+from . import state, create_timestamp
 import json
-from PySide6.QtCore import QObject, Signal
 
 def print_construction_progress(self):
     loops = 0
     total = 0
     self.html_output = ""
     self.extra = ""
-    self.html_output += "<hr>Timestamp: Not added :P<br>"
-    self.html_output += "<hr>Mode: Delivery Tracking<br>"
+    self.trips = ""
+    self.html_output += f"<hr>{create_timestamp.generate_one_time_timestamp()}<hr>"
+    #self.html_output += "<hr>Mode: Delivery Tracking<br>"
 
     try:
         with open('Construction_progress.json', "r") as progress:
@@ -31,10 +28,14 @@ def print_construction_progress(self):
                         self.html_output += f"✔  {item.capitalize():<{max_item_length - 3}}: {count:>{5}} <br>"
                 else:
                     self.html_output += "No progress file found. Please dock at construction to generate file"
-        self.html_output += "<hr>"
+        #self.html_output += "<hr>"
         trips_left = total/state.ship_cargo_space
         trips_left = math.ceil(trips_left)
-        self.extra += f"{trips_left} trip{'s' if trips_left != 1 else ''} left<br>"
+        if trips_left != 1:
+             self.trips = f"Trips left: {trips_left}"
+        else:
+              self.trips = f"{trips_left} trip left"
+        #self.extra += "<hr><br>"
         if state.percent_complete is None:
             self.percent = '<html><head/><body><p><span style=" font-size:16pt; font-weight:700;">Awaiting data...</span></p></body></html>'
         else:

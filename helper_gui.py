@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'ed-construction-helperjquYfu.ui'
+## Form generated from reading UI file 'ed-construction-helpereACPxY.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.0
 ##
@@ -18,7 +18,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QHBoxLayout,
     QMainWindow, QProgressBar, QPushButton, QSizePolicy,
-    QTabWidget, QTextBrowser, QVBoxLayout, QWidget)
+    QSpacerItem, QTabWidget, QTextBrowser, QVBoxLayout,
+    QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -101,25 +102,27 @@ class Ui_MainWindow(object):
 
         self.frame_3 = QFrame(self.frame_2)
         self.frame_3.setObjectName(u"frame_3")
-        self.frame_3.setMinimumSize(QSize(541, 81))
+        self.frame_3.setMinimumSize(QSize(500, 81))
         self.frame_3.setMaximumSize(QSize(600, 84))
         self.frame_3.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_3.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout_3 = QGridLayout(self.frame_3)
         self.gridLayout_3.setObjectName(u"gridLayout_3")
-        self.progressBar = QProgressBar(self.frame_3)
-        self.progressBar.setObjectName(u"progressBar")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.Percent_display = QTextBrowser(self.frame_3)
+        self.Percent_display.setObjectName(u"Percent_display")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.progressBar.sizePolicy().hasHeightForWidth())
-        self.progressBar.setSizePolicy(sizePolicy2)
-        self.progressBar.setMaximumSize(QSize(16777215, 26))
-        self.progressBar.setAutoFillBackground(True)
-        self.progressBar.setValue(100)
-        self.progressBar.setTextVisible(False)
+        sizePolicy2.setHeightForWidth(self.Percent_display.sizePolicy().hasHeightForWidth())
+        self.Percent_display.setSizePolicy(sizePolicy2)
+        self.Percent_display.setMinimumSize(QSize(100, 40))
+        self.Percent_display.setMaximumSize(QSize(256, 40))
+        self.Percent_display.setMouseTracking(False)
+        self.Percent_display.setAcceptDrops(False)
+        self.Percent_display.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.Percent_display.setOpenLinks(False)
 
-        self.gridLayout_3.addWidget(self.progressBar, 1, 0, 1, 2)
+        self.gridLayout_3.addWidget(self.Percent_display, 0, 2, 1, 1)
 
         self.textBrowser = QTextBrowser(self.frame_3)
         self.textBrowser.setObjectName(u"textBrowser")
@@ -134,18 +137,19 @@ class Ui_MainWindow(object):
 
         self.gridLayout_3.addWidget(self.textBrowser, 0, 0, 1, 1)
 
-        self.Percent_display = QTextBrowser(self.frame_3)
-        self.Percent_display.setObjectName(u"Percent_display")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        self.progressBar = QProgressBar(self.frame_3)
+        self.progressBar.setObjectName(u"progressBar")
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         sizePolicy4.setHorizontalStretch(0)
         sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.Percent_display.sizePolicy().hasHeightForWidth())
-        self.Percent_display.setSizePolicy(sizePolicy4)
-        self.Percent_display.setMinimumSize(QSize(256, 40))
-        self.Percent_display.setMaximumSize(QSize(256, 40))
-        self.Percent_display.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        sizePolicy4.setHeightForWidth(self.progressBar.sizePolicy().hasHeightForWidth())
+        self.progressBar.setSizePolicy(sizePolicy4)
+        self.progressBar.setMaximumSize(QSize(16777215, 26))
+        self.progressBar.setAutoFillBackground(True)
+        self.progressBar.setValue(100)
+        self.progressBar.setTextVisible(False)
 
-        self.gridLayout_3.addWidget(self.Percent_display, 0, 1, 1, 1)
+        self.gridLayout_3.addWidget(self.progressBar, 2, 0, 1, 3)
 
 
         self.gridLayout_4.addWidget(self.frame_3, 2, 0, 1, 1)
@@ -169,11 +173,40 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addWidget(self.extra_info)
 
+        self.trip_display = QTextBrowser(self.frame)
+        self.trip_display.setObjectName(u"trip_display")
+        sizePolicy1.setHeightForWidth(self.trip_display.sizePolicy().hasHeightForWidth())
+        self.trip_display.setSizePolicy(sizePolicy1)
+        self.trip_display.setMaximumSize(QSize(16777215, 40))
+        self.trip_display.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.trip_display.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+
+        self.verticalLayout_3.addWidget(self.trip_display)
+
+        self.create_shopping = QPushButton(self.frame)
+        self.create_shopping.setObjectName(u"create_shopping")
+
+        self.verticalLayout_3.addWidget(self.create_shopping)
+
+        self.copy_list = QPushButton(self.frame)
+        self.copy_list.setObjectName(u"copy_list")
+
+        self.verticalLayout_3.addWidget(self.copy_list)
+
+        self.delete_file = QPushButton(self.frame)
+        self.delete_file.setObjectName(u"delete_file")
+
+        self.verticalLayout_3.addWidget(self.delete_file)
+
+        self.horizontalSpacer = QSpacerItem(200, 25, QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Minimum)
+
+        self.verticalLayout_3.addItem(self.horizontalSpacer)
+
         self.pushButton = QPushButton(self.frame)
         self.pushButton.setObjectName(u"pushButton")
         self.pushButton.setEnabled(True)
-        sizePolicy2.setHeightForWidth(self.pushButton.sizePolicy().hasHeightForWidth())
-        self.pushButton.setSizePolicy(sizePolicy2)
+        sizePolicy4.setHeightForWidth(self.pushButton.sizePolicy().hasHeightForWidth())
+        self.pushButton.setSizePolicy(sizePolicy4)
         self.pushButton.setMouseTracking(False)
         self.pushButton.setAutoFillBackground(False)
         self.pushButton.setCheckable(True)
@@ -184,8 +217,8 @@ class Ui_MainWindow(object):
         self.pushButton_2 = QPushButton(self.frame)
         self.pushButton_2.setObjectName(u"pushButton_2")
         self.pushButton_2.setEnabled(True)
-        sizePolicy2.setHeightForWidth(self.pushButton_2.sizePolicy().hasHeightForWidth())
-        self.pushButton_2.setSizePolicy(sizePolicy2)
+        sizePolicy4.setHeightForWidth(self.pushButton_2.sizePolicy().hasHeightForWidth())
+        self.pushButton_2.setSizePolicy(sizePolicy4)
         self.pushButton_2.setCheckable(True)
         self.pushButton_2.setAutoExclusive(True)
 
@@ -193,8 +226,8 @@ class Ui_MainWindow(object):
 
         self.pushButton_3 = QPushButton(self.frame)
         self.pushButton_3.setObjectName(u"pushButton_3")
-        sizePolicy2.setHeightForWidth(self.pushButton_3.sizePolicy().hasHeightForWidth())
-        self.pushButton_3.setSizePolicy(sizePolicy2)
+        sizePolicy4.setHeightForWidth(self.pushButton_3.sizePolicy().hasHeightForWidth())
+        self.pushButton_3.setSizePolicy(sizePolicy4)
         self.pushButton_3.setCheckable(True)
         self.pushButton_3.setChecked(False)
         self.pushButton_3.setAutoExclusive(True)
@@ -243,14 +276,6 @@ class Ui_MainWindow(object):
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:24pt; font-weight:700;\">Construction material list</span></p></body></html>", None))
-        self.textBrowser.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"hr { height: 1px; border-width: 0; }\n"
-"li.unchecked::marker { content: \"\\2610\"; }\n"
-"li.checked::marker { content: \"\\2612\"; }\n"
-"</style></head><body style=\" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:16pt; font-weight:700;\">Construction Progress:</span></p></body></html>", None))
         self.Percent_display.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -259,6 +284,28 @@ class Ui_MainWindow(object):
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:16pt; font-weight:700;\">Null</span></p></body></html>", None))
+        self.textBrowser.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:16pt; font-weight:700;\">Construction Progress:</span></p></body></html>", None))
+        self.trip_display.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", None))
+        self.create_shopping.setText(QCoreApplication.translate("MainWindow", u"Create shopping list", None))
+#if QT_CONFIG(tooltip)
+        self.copy_list.setToolTip(QCoreApplication.translate("MainWindow", u"Copies the delivery list to the shopping list", None))
+#endif // QT_CONFIG(tooltip)
+        self.copy_list.setText(QCoreApplication.translate("MainWindow", u"Copy lists", None))
+        self.delete_file.setText(QCoreApplication.translate("MainWindow", u"Delete progress file", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Construction Tracker", None))
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Shopping List", None))
         self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"Journal Monitor", None))
