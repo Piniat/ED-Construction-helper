@@ -1,5 +1,16 @@
 # ED Construction helper
-This is the very work in progress version of a GUI remake of the original ED-Construction-helper app. 
+This is the GUI remake of the original ED-Construction-helper app. 
+<br>
+<br>
+To install:
+```
+git clone -b GUI https://github.com/Piniat/ED-Construction-helper.git
+cd ED-Construction-helper
+```
+To run:
+```
+python main.py
+```
 <br>
 <br>
 **What is currently implemented**
