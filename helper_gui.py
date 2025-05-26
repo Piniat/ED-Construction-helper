@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'ed-construction-helpereACPxY.ui'
+## Form generated from reading UI file 'ed-construction-helperWiQSUe.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.0
 ##
@@ -267,7 +267,13 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"ED-Construction-helper", None))
+#if QT_CONFIG(tooltip)
+        self.quit_button.setToolTip(QCoreApplication.translate("MainWindow", u"Exits the app", None))
+#endif // QT_CONFIG(tooltip)
         self.quit_button.setText(QCoreApplication.translate("MainWindow", u"Quit", None))
+#if QT_CONFIG(tooltip)
+        self.tabWidget.setToolTip("")
+#endif // QT_CONFIG(tooltip)
         self.textBrowser_2.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -292,6 +298,9 @@ class Ui_MainWindow(object):
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:16pt; font-weight:700;\">Construction Progress:</span></p></body></html>", None))
+#if QT_CONFIG(tooltip)
+        self.trip_display.setToolTip(QCoreApplication.translate("MainWindow", u"Trips remaining to finish (based on current cargo capacity)", None))
+#endif // QT_CONFIG(tooltip)
         self.trip_display.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -300,14 +309,29 @@ class Ui_MainWindow(object):
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", None))
+#if QT_CONFIG(tooltip)
+        self.create_shopping.setToolTip(QCoreApplication.translate("MainWindow", u"Allows you to create a shopping list", None))
+#endif // QT_CONFIG(tooltip)
         self.create_shopping.setText(QCoreApplication.translate("MainWindow", u"Create shopping list", None))
 #if QT_CONFIG(tooltip)
         self.copy_list.setToolTip(QCoreApplication.translate("MainWindow", u"Copies the delivery list to the shopping list", None))
 #endif // QT_CONFIG(tooltip)
         self.copy_list.setText(QCoreApplication.translate("MainWindow", u"Copy lists", None))
+#if QT_CONFIG(tooltip)
+        self.delete_file.setToolTip(QCoreApplication.translate("MainWindow", u"Gives you the option to delete either progress json file", None))
+#endif // QT_CONFIG(tooltip)
         self.delete_file.setText(QCoreApplication.translate("MainWindow", u"Delete progress file", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton.setToolTip(QCoreApplication.translate("MainWindow", u"Switches to the construction delivery tracker", None))
+#endif // QT_CONFIG(tooltip)
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Construction Tracker", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_2.setToolTip(QCoreApplication.translate("MainWindow", u"Switches to the shopping list tracker", None))
+#endif // QT_CONFIG(tooltip)
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Shopping List", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_3.setToolTip(QCoreApplication.translate("MainWindow", u"Switches to the journal event display mode", None))
+#endif // QT_CONFIG(tooltip)
         self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"Journal Monitor", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("MainWindow", u"Tracker", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Inara), QCoreApplication.translate("MainWindow", u"Inara", None))

@@ -23,6 +23,9 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="1" column="0">
      <widget class="QPushButton" name="quit_button">
+      <property name="toolTip">
+       <string>Exits the app</string>
+      </property>
       <property name="text">
        <string>Quit</string>
       </property>
@@ -35,6 +38,9 @@
         <width>916</width>
         <height>685</height>
        </size>
+      </property>
+      <property name="toolTip">
+       <string/>
       </property>
       <property name="autoFillBackground">
        <bool>false</bool>
@@ -330,6 +336,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
                   <height>40</height>
                  </size>
                 </property>
+                <property name="toolTip">
+                 <string>Trips remaining to finish (based on current cargo capacity)</string>
+                </property>
                 <property name="verticalScrollBarPolicy">
                  <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
                 </property>
@@ -350,6 +359,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
               </item>
               <item>
                <widget class="QPushButton" name="create_shopping">
+                <property name="toolTip">
+                 <string>Allows you to create a shopping list</string>
+                </property>
                 <property name="text">
                  <string>Create shopping list</string>
                 </property>
@@ -367,6 +379,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
               </item>
               <item>
                <widget class="QPushButton" name="delete_file">
+                <property name="toolTip">
+                 <string>Gives you the option to delete either progress json file</string>
+                </property>
                 <property name="text">
                  <string>Delete progress file</string>
                 </property>
@@ -402,6 +417,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
                 <property name="mouseTracking">
                  <bool>false</bool>
                 </property>
+                <property name="toolTip">
+                 <string>Switches to the construction delivery tracker</string>
+                </property>
                 <property name="autoFillBackground">
                  <bool>false</bool>
                 </property>
@@ -427,6 +445,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Switches to the shopping list tracker</string>
+                </property>
                 <property name="text">
                  <string>Shopping List</string>
                 </property>
@@ -445,6 +466,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Switches to the journal event display mode</string>
                 </property>
                 <property name="text">
                  <string>Journal Monitor</string>

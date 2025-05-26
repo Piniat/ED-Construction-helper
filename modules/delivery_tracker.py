@@ -1,4 +1,4 @@
-from modules import state, create_progress_file, print_delivery_progress
+from modules import state, print_delivery_progress
 import os
 import json
 import ndjson

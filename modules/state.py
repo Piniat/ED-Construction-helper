@@ -11,7 +11,9 @@ new_list = []
 
 ready_to_update = False
 
-
+msg_box_contents = ""
+msg_box_close_time = 1000
+msg_box_response = None
 
 commodity_count = 0
 progress_list = {}
