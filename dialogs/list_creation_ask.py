@@ -23,19 +23,14 @@ class prompt_user_creation(QDialog):
         cancel.clicked.connect(self.cancel_and_set)
 
     def new_and_close(self):
-        state.app_mode = None
-        #self.reject()
         create_shopping_list_dialog.open_input_dialog(self)
         self.reject()
         state.app_mode = "shopping"
 
     def copy_and_close(self):
-        state.app_mode = None
-        #self.reject()
         copy_lists.copy_delivery_to_shopping(self)
         self.reject()
         state.app_mode = "shopping"
 
     def cancel_and_set(self):
-        state.app_mode = None
         self.reject()

@@ -13,10 +13,12 @@ def tracking_mode(self):
     self.html_output += f"<hr>{create_timestamp.generate_one_time_timestamp()}<hr>"
     if not os.path.isfile('Shopping_list.json') and state.initialized == False:
         if os.path.isfile('Construction_progress.json'):
-            print("copy possible, ask if wanna copy")
+            #print("copy possible, ask if wanna copy")
+            state.app_mode = None
             self.creation_ask.emit()
         else:
-            print("notify about missing file and peform manual creation")
+            #print("notify about missing file and peform manual creation")
+            state.app_mode = None
             self.creation_no_ask.emit()
     elif (state.initialized == False) or (state.switched == True):
         with open('Shopping_list.json', 'r') as openfile:

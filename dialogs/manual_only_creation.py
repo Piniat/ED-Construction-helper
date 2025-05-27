@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton
-from modules import copy_lists, state, create_shopping_list_dialog
+from modules import state, create_shopping_list_dialog
 
 class prompt_user_creation(QDialog):
     def __init__(self, parent = None, modal = True):
@@ -20,11 +20,9 @@ class prompt_user_creation(QDialog):
         cancel.clicked.connect(self.cancel_and_set)
 
     def new_and_close(self):
-        state.app_mode = None
         create_shopping_list_dialog.open_input_dialog(self)
-        self.reject()
         state.app_mode = "shopping"
+        self.reject()
 
     def cancel_and_set(self):
-        state.app_mode = None
         self.reject()
