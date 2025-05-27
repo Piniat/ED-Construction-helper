@@ -23,9 +23,6 @@ python main.py
   <li>Shopping list creation</li>
   <li>Shopping list tracking</li>
   <li>Deletion of both progress files</li>
-  <li>Shopping list creation</li>
-  <li>Shopping list tracking</li>
-  <li>Deletion of both progress files</li>
   <li>Update checker</li>
   <li>Auto updater</li>
   <li>Error logger</li>
@@ -41,7 +38,7 @@ python main.py
   <li>Auto updater</li>
   <li>Error logger</li>
   <li>Automatic config creator</s></li>
-  <li><s>User onboarding</s>(SCRAPPED FOR NOW)</li>
+  <li><s>User onboarding</s>(scrapped for now)</li>
   <li>Shopping list editor</li>
 </ul>
 
