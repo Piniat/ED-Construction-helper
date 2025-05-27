@@ -13,6 +13,7 @@ class AppWorker(QObject):
     information_panel = Signal(str)
     trips_display = Signal(str)
     creation_ask = Signal()
+    creation_no_ask = Signal()
 
     def get_latest_journal(self):
         latest_file = glob.glob(os.path.join(state.journal_folder, 'Journal.*.log'))

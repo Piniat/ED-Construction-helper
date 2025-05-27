@@ -1,9 +1,19 @@
-from PySide6.QtWidgets import QApplication, QMainWindow
-from PySide6.QtCore import QThread, QObject
+import os
+import platform
+usr_platform = platform.system().lower()
+if usr_platform == 'windows':
+    print('Working around windows qtwebengine crash')
+    print('falling back to software rendering')
+    os.environ["QT_QPA_PLATFORM"] = "windows"  # fallback platform
+    os.environ["QT_OPENGL"] = "software"
+    os.environ["QTWEBENGINE_DISABLE_GPU"] = "1"
+    os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--disable-gpu --disable-software-rasterizer"
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
+from PySide6.QtCore import QThread, QObject, Qt
 from helper_gui import Ui_MainWindow
 from app import AppWorker
 from modules import set_app_mode, create_shopping_list_dialog, error_logger
-from dialogs import copy_dialog, delete_list_dialog, list_creation_ask
+from dialogs import copy_dialog, delete_list_dialog, list_creation_ask, manual_only_creation
 import start_app
 #import pdb; pdb.set_trace()
 
@@ -15,6 +25,7 @@ class MainApp(QMainWindow, QObject):
             copy_list_dialog = copy_dialog.ListCopy(parent=self)
             delete_dialog_list = delete_list_dialog.DeleteList(parent=self)
             user_resolve = list_creation_ask.prompt_user_creation(parent=self)
+            user_no_reslove = manual_only_creation.prompt_user_creation(parent=self)
             self.ui = Ui_MainWindow()
             self.ui.setupUi(self)
             self.ui.quit_button.clicked.connect(self.close)
@@ -38,6 +49,8 @@ class MainApp(QMainWindow, QObject):
             self.worker.information_panel.connect(self.ui.extra_info.setHtml)
             self.worker.trips_display.connect(self.ui.trip_display.setHtml)
             self.worker.creation_ask.connect(lambda: user_resolve.exec())
+            self.worker.creation_no_ask.connect(lambda: user_no_reslove.exec())
+
 
             start_app.begin_checks(self)
 

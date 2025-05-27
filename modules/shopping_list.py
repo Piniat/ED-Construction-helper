@@ -1,4 +1,5 @@
-from . import state, create_timestamp, print_shopping_list
+from . import state, create_timestamp, print_shopping_list, create_shopping_list_dialog
+from dialogs import manual_only_creation
 from PySide6.QtCore import QObject, Signal
 import re
 import os
@@ -16,6 +17,7 @@ def tracking_mode(self):
             self.creation_ask.emit()
         else:
             print("notify about missing file and peform manual creation")
+            self.creation_no_ask.emit()
     elif (state.initialized == False) or (state.switched == True):
         with open('Shopping_list.json', 'r') as openfile:
             initial_list = json.load(openfile)

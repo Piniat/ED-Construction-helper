@@ -13,12 +13,11 @@ def run_as_admin():
         os._exit(0)
 
 def extract():
-    global platform
-    platform = platform.system().lower()
-    if platform == 'windows':
+    usr_platform = platform.system().lower()
+    if usr_platform == 'windows':
         run_as_admin()
         state.user_os = "windows"
-    elif platform == 'linux':
+    elif usr_platform == 'linux':
         state.user_os = "linux"
     else:
         print("Unsupported platform")

@@ -2,10 +2,9 @@ import requests
 import os
 import time
 import configparser
-from modules import state, updater, exit_app, first_time_launch, error_logger, message_box, yes_and_no_prompt_box
+from modules import state, updater, exit_app, error_logger, message_box, yes_and_no_prompt_box
 from prompt_toolkit import prompt
-from PySide6.QtWidgets import QMessageBox, QFileDialog
-from PySide6.QtCore import QTimer
+from PySide6.QtWidgets import QFileDialog
 
 def start_app():
     return
@@ -144,7 +143,7 @@ def begin_checks(self):
         global CURRENT_VERSION
         global tries
         #App version for displaying and version check
-        CURRENT_VERSION = "v1.0.0-dev"
+        CURRENT_VERSION = "v2.0.0-beta"
         #ignore updates for dev version
         dev_version = False
         state.current_version = CURRENT_VERSION
@@ -156,7 +155,9 @@ def begin_checks(self):
         missing_updater_version = False
         tries = 0
         if not os.path.isfile('config.ini'):
-            path = QFileDialog.getExistingDirectory(None, "Select journal directory")
+            options = QFileDialog.Options()
+            options |= QFileDialog.DontUseNativeDialog
+            path = QFileDialog.getExistingDirectory(None, "Select journal directory", options=options)
             config = configparser.ConfigParser()
             config['JOURNAL_PATH'] = {'path': path}
             config['AUTO_UPDATE'] = {'value': "True"}
