@@ -46,4 +46,7 @@ python main.py
 </ul>
 
 Small preview of what it looks like currently:<br>
-![Screenshot_20250525_202758](https://github.com/user-attachments/assets/761598c4-600d-4d31-a650-102157979f73)
+![Screenshot_20250527_153203](https://github.com/user-attachments/assets/0d36f1fa-93ca-4b50-ba2d-a54c80b3df89)
+
+![Screenshot_20250527_153325](https://github.com/user-attachments/assets/c3c85ad6-1eb9-404f-a984-73f689977d83)
+
