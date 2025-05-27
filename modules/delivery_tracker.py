@@ -58,6 +58,7 @@ def colonisation_tracker(self):
             for self.event in curr_event:
                 if self.event.get('event') == "Loadout":
                     state.ship_cargo_space = self.event.get('CargoCapacity')
+                    print_delivery_progress.print_construction_progress(self)
                 #exits app if shutdown event is detected
                 if self.event.get('event') == "Shutdown":
                     #event_handler.game_shutdown()

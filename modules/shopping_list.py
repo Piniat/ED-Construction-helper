@@ -31,6 +31,9 @@ def tracking_mode(self):
                 try:
                     curr_event = ndjson.loads(line.strip())
                     for self.event in curr_event:
+                            if self.event.get('event') == "Loadout":
+                                 state.ship_cargo_space = self.event.get('CargoCapacity')
+                                 print_shopping_list.print_list(self)
                             if self.event.get('event') == "MarketBuy":
                                 with open('progress.json', 'r') as openfile:
                                     initial_list = json.load(openfile)
