@@ -5,10 +5,10 @@ This is the GUI remake of the original ED-Construction-helper app.
 To install:
 ```
 git clone -b GUI https://github.com/Piniat/ED-Construction-helper.git
-cd ED-Construction-helper
 ```
 To run:
 ```
+cd ED-Construction-helper
 python main.py
 ```
 <br>
