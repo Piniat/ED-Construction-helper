@@ -1,7 +1,19 @@
 # ED Construction helper
-This is the very work in progress version of a GUI remake of the original ED-Construction-helper app. 
+This is the GUI remake of the original ED-Construction-helper app. 
 <br>
 <br>
+To install:
+```
+git clone -b GUI https://github.com/Piniat/ED-Construction-helper.git
+cd ED-Construction-helper
+```
+To run:
+```
+python main.py
+```
+<br>
+<br>
+
 **What is currently implemented**
 <ul>
   <li>Delivery tracking</li>
@@ -11,18 +23,25 @@ This is the very work in progress version of a GUI remake of the original ED-Con
   <li>Shopping list creation</li>
   <li>Shopping list tracking</li>
   <li>Deletion of both progress files</li>
+  <li>Shopping list creation</li>
+  <li>Shopping list tracking</li>
+  <li>Deletion of both progress files</li>
+  <li>Update checker</li>
+  <li>Auto updater</li>
+  <li>Error logger</li>
+  <li>Automatic config creator</li>
 </ul><br>
 
 **What needs to be implemented**
 <ul>
   <li><s>Shopping list creation</li>
   <li>Shopping list tracking</li>
-  <li>Deletion of both progress files</s></li>
+  <li>Deletion of both progress files</li>
   <li>Update checker</li>
   <li>Auto updater</li>
-  <li>User onboarding</li>
   <li>Error logger</li>
-  <li>Automatic config creator</li>
+  <li>Automatic config creator</s></li>
+  <li><s>User onboarding</s>(SCRAPPED FOR NOW)</li>
   <li>Shopping list editor</li>
 </ul>
 
