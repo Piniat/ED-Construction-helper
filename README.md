@@ -5,10 +5,10 @@ This is the GUI remake of the original ED-Construction-helper app.
 To install:
 ```
 git clone -b GUI https://github.com/Piniat/ED-Construction-helper.git
-cd ED-Construction-helper
 ```
 To run:
 ```
+cd ED-Construction-helper
 python main.py
 ```
 <br>
@@ -20,9 +20,6 @@ python main.py
   <li>Fully automated delivery list creator and ship cargo space detection</li>
   <li>Journal event name readout</li>
   <li>Inara webview page</li>
-  <li>Shopping list creation</li>
-  <li>Shopping list tracking</li>
-  <li>Deletion of both progress files</li>
   <li>Shopping list creation</li>
   <li>Shopping list tracking</li>
   <li>Deletion of both progress files</li>
@@ -41,7 +38,7 @@ python main.py
   <li>Auto updater</li>
   <li>Error logger</li>
   <li>Automatic config creator</s></li>
-  <li><s>User onboarding</s>(SCRAPPED FOR NOW)</li>
+  <li><s>User onboarding</s>(scrapped for now)</li>
   <li>Shopping list editor</li>
 </ul>
 
